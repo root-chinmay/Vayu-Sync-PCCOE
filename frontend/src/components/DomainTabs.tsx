@@ -334,7 +334,7 @@ export const DomainTabs: React.FC<DomainTabsProps> = ({
 
           {marine.coastal_advisory && (
             <div className="p-3.5 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-900/50 text-xs text-sky-900 dark:text-sky-300 shadow-xs">
-              <strong>IMD Marine Advisory: </strong> {marine.coastal_advisory}
+              <strong>Marine Advisory: </strong> {marine.coastal_advisory}
             </div>
           )}
         </div>

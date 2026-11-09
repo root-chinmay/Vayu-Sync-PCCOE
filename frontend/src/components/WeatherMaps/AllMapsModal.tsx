@@ -51,7 +51,7 @@ export const AllMapsModal: React.FC<AllMapsModalProps> = ({
   const sections: MapCatalogSection[] = [
     {
       title: t.map_category_radar || 'Radar',
-      info: 'Real-time IMD & international Doppler radar telemetry',
+      info: 'Real-time Doppler radar telemetry',
       items: [
         {
           id: 'radar',
@@ -86,7 +86,7 @@ export const AllMapsModal: React.FC<AllMapsModalProps> = ({
         {
           id: 'radar',
           title: t.bulletin_title || 'Government Advisories & Warnings',
-          subtitle: t.map_legend_heatwave_desc || 'IMD weather alerts and active cyclone tracks',
+          subtitle: t.map_legend_heatwave_desc || 'Weather alerts and active cyclone tracks',
           icon: <ShieldAlert className="w-5 h-5 text-amber-600 dark:text-amber-400" />,
         },
         {

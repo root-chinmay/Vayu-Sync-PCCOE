@@ -27,7 +27,7 @@ export const MapLegend: React.FC<MapLegendProps> = ({ activeLayer }) => {
             mod: 'মাঝারি (৩০)',
             heavy: 'ভারী (৪৫)',
             severe: 'তীব্র (৬০+)',
-            desc: 'IMD রাডার স্টেশন দ্বারা সনাক্তকৃত বৃষ্টিবিন্দু ও ঝড়ের গতিবিধি প্রদর্শন করে।',
+            desc: 'রাডার স্টেশন দ্বারা সনাক্তকৃত বৃষ্টিবিন্দু ও ঝড়ের গতিবিধি প্রদর্শন করে।',
           },
           wind: {
             title: 'বাতাসের গতিবেগ',
@@ -65,7 +65,7 @@ export const MapLegend: React.FC<MapLegendProps> = ({ activeLayer }) => {
             mod: 'మోస్తరు (30)',
             heavy: 'భారీ (45)',
             severe: 'తీవ్రమైన (60+)',
-            desc: 'IMD రాడార్ స్టేషన్లు గుర్తించిన వర్షపు చినుకులు మరియు తుఫాను కణాలను సూచిస్తుంది.',
+            desc: 'రాడార్ స్టేషన్లు గుర్తించిన వర్షపు చినుకులు మరియు తుఫాను కణాలను సూచిస్తుంది.',
           },
           wind: {
             title: 'గాలి వేగం',
@@ -103,7 +103,7 @@ export const MapLegend: React.FC<MapLegendProps> = ({ activeLayer }) => {
             mod: 'मध्यम (३०)',
             heavy: 'मुसळधार (४५)',
             severe: 'अतिवृष्टी (६०+)',
-            desc: 'IMD रडार स्थानकांद्वारे नोंदवलेले पावसाचे थेंब, गारपीट आणि वादळी ढग दर्शवते.',
+            desc: 'रडार स्थानकांद्वारे नोंदवलेले पावसाचे थेंब, गारपीट आणि वादळी ढग दर्शवते.',
           },
           wind: {
             title: 'वाऱ्याचा वेग',
@@ -179,7 +179,7 @@ export const MapLegend: React.FC<MapLegendProps> = ({ activeLayer }) => {
             mod: 'Mod (30)',
             heavy: 'Heavy (45)',
             severe: 'Severe (60+)',
-            desc: 'Reflects raindrops, hail cores, and convective storm cells detected by IMD radar stations.',
+            desc: 'Reflects raindrops, hail cores, and convective storm cells detected by Doppler radar stations.',
           },
           wind: {
             title: 'Wind Velocity',

@@ -62,10 +62,10 @@ export async function GET() {
         priority: 'high',
       },
       {
-        service: 'IMD Mausam Seva (Weather Enquiry)',
+        service: 'National Weather Seva (Weather Enquiry)',
         number: '1800-180-1717',
         badge: 'Meteorological',
-        description: 'India Meteorological Department official public toll-free weather query line.',
+        description: 'National official public toll-free weather query line.',
         icon: 'cloud-sun',
         priority: 'standard',
       },
@@ -84,7 +84,7 @@ export async function GET() {
         contacts: [
           { title: 'National Disaster Helpline', number: '1078', hours: '24/7 Toll-free' },
           { title: 'NDRF Control Room', number: '9711077372', hours: '24/7 Operations' },
-          { title: 'IMD Weather Information Desk', number: '011-24651212', hours: '06:00 - 22:00 IST' },
+          { title: 'National Weather Information Desk', number: '011-24651212', hours: '06:00 - 22:00 IST' },
           { title: 'Central Water Commission (Flood Alert)', number: '011-26106523', hours: '24/7 Monsoon Room' },
         ],
       },

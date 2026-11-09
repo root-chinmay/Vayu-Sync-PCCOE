@@ -17,7 +17,6 @@ import { StandardMausam } from '../components/StandardMausam';
 import { VayuSyncPersonalized } from '../components/VayuSyncPersonalized';
 import { PersonalizationModal } from '../components/PersonalizationModal';
 import { AIAssistantModal } from '../components/AIAssistantModal';
-import { JudgeDemoDrawer } from '../components/JudgeDemoDrawer';
 import { HelpReportModal } from '../components/HelpReportModal';
 import { useLanguage } from '../hooks/useLanguage';
 import { ALL_INDIAN_LANGUAGES, Language } from '../lib/i18n';
@@ -468,16 +467,6 @@ function MainApp() {
           </button>
         </>
       )}
-
-      {/* Discreet Evaluator Demo Controls Drawer */}
-      <JudgeDemoDrawer
-        activeScenario={activeScenario}
-        onSelectScenario={(scId) => setActiveScenario(scId)}
-        onResetToLive={() => setActiveScenario(null)}
-        simulatedHour={simulatedHour}
-        onHourChange={(hr) => setSimulatedHour(hr)}
-        onApplyProfile={(prof) => handleSaveContext({ ...context, ...prof })}
-      />
 
       {/* ── ONBOARDING MODAL 1: LOCATION PERMISSION (ONLY ACCEPT BUTTON) ────── */}
       {onboardingStep === 'location' && (

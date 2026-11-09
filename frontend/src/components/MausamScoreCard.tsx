@@ -59,7 +59,7 @@ export const MausamScoreCard: React.FC<MausamScoreCardProps> = ({
 
   return (
     <div className="w-full space-y-4">
-      {/* Active IMD Severe Alerts Banner */}
+      {/* Active Severe Alerts Banner */}
       {weather.alerts && weather.alerts.length > 0 && (
         <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 shadow-sm flex items-start gap-3.5">
           <div className="p-2 rounded-xl bg-rose-100 dark:bg-rose-900/60 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800 shrink-0 mt-0.5 animate-pulse">
@@ -68,7 +68,7 @@ export const MausamScoreCard: React.FC<MausamScoreCardProps> = ({
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2 mb-1">
               <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded-md bg-rose-600 text-white tracking-wider">
-                {weather.alerts[0].severity}
+                Alert: {weather.alerts[0].severity}
               </span>
               <span className="text-xs font-mono text-rose-700 dark:text-rose-400 font-semibold">
                 {weather.alerts[0].source}

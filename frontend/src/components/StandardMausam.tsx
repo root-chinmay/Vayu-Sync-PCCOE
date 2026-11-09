@@ -122,7 +122,7 @@ export const StandardMausam: React.FC<StandardMausamProps> = ({
         </div>
       </div>
 
-      {/* 2. Official Weather Warnings (IMD Protocol) */}
+      {/* 2. Official Weather Warnings */}
       <div id="warnings" className="w-full scroll-mt-28">
         {alerts.length > 0 ? (
           <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 flex items-start gap-3 text-slate-900 dark:text-slate-100 shadow-sm">
@@ -130,7 +130,7 @@ export const StandardMausam: React.FC<StandardMausamProps> = ({
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded bg-rose-600 text-white">
-                  IMD {alerts[0].severity}
+                  Alert: {alerts[0].severity}
                 </span>
                 <span className="text-xs font-mono text-rose-700 dark:text-rose-400">{alerts[0].source}</span>
               </div>

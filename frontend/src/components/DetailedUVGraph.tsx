@@ -46,6 +46,30 @@ export const DetailedUVGraph: React.FC<DetailedUVGraphProps> = ({ hourly, curren
     return '< 10 mins (Urgent Protection)';
   };
 
+  const formatHourLabel = (timeStr: string) => {
+    if (!timeStr) return '';
+    try {
+      const d = new Date(timeStr);
+      if (!isNaN(d.getTime())) {
+        return d.toLocaleTimeString([], { hour: 'numeric', hour12: true });
+      }
+    } catch {}
+    if (timeStr.includes('T')) {
+      const timePart = timeStr.split('T')[1]?.slice(0, 5);
+      if (timePart) {
+        const [hStr] = timePart.split(':');
+        const hNum = parseInt(hStr, 10);
+        if (!isNaN(hNum)) {
+          const ampm = hNum >= 12 ? 'PM' : 'AM';
+          const formattedHour = hNum % 12 === 0 ? 12 : hNum % 12;
+          return `${formattedHour} ${ampm}`;
+        }
+        return timePart;
+      }
+    }
+    return timeStr;
+  };
+
   const peakCategory = getUVCategory(maxUV);
 
   // SVG Chart Geometry
@@ -220,6 +244,16 @@ export const DetailedUVGraph: React.FC<DetailedUVGraphProps> = ({ hourly, curren
             strokeLinecap="round"
           />
 
+          {/* Clean X Axis Baseline */}
+          <line
+            x1={paddingX}
+            y1={paddingTop + chartH}
+            x2={width - paddingX}
+            y2={paddingTop + chartH}
+            stroke={isDark ? '#334155' : '#cbd5e1'}
+            strokeWidth="1.5"
+          />
+
           {/* Data Points */}
           {points.map((p, i) => {
             const cat = getUVCategory(p.uv);
@@ -250,16 +284,26 @@ export const DetailedUVGraph: React.FC<DetailedUVGraphProps> = ({ hourly, curren
                   strokeWidth={isHovered ? 2.5 : 1.5}
                 />
 
-                {/* X Axis Time Labels (Every 3 hours) */}
+                {/* X Axis Time Labels with Tick Marks (Every 3 hours) */}
                 {i % 3 === 0 && (
-                  <text
-                    x={p.x}
-                    y={paddingTop + chartH + 22}
-                    textAnchor="middle"
-                    className="text-[11px] fill-slate-500 dark:fill-slate-400 font-medium font-mono"
-                  >
-                    {p.hour}
-                  </text>
+                  <g>
+                    <line
+                      x1={p.x}
+                      y1={paddingTop + chartH}
+                      x2={p.x}
+                      y2={paddingTop + chartH + 5}
+                      stroke={isDark ? '#64748b' : '#94a3b8'}
+                      strokeWidth="1.5"
+                    />
+                    <text
+                      x={p.x}
+                      y={paddingTop + chartH + 20}
+                      textAnchor="middle"
+                      className="text-[11px] fill-slate-600 dark:fill-slate-300 font-semibold font-sans select-none"
+                    >
+                      {formatHourLabel(p.hour)}
+                    </text>
+                  </g>
                 )}
               </g>
             );
@@ -298,7 +342,7 @@ export const DetailedUVGraph: React.FC<DetailedUVGraphProps> = ({ hourly, curren
             }}
           >
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-slate-800 dark:text-slate-100">{activePoint.hour}</span>
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-100">{formatHourLabel(activePoint.hour)}</span>
               <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${getUVCategory(activePoint.uv).bg} ${getUVCategory(activePoint.uv).color}`}>
                 {getUVCategory(activePoint.uv).label}
               </span>

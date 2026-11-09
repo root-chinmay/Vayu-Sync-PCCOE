@@ -88,15 +88,15 @@ export const DEMO_SCENARIOS: Record<string, any> = {
     pm10: 30.0,
     visibility: 2.5,
     alert: {
-      id: 'imd-red-mumbai',
+      id: 'alert-red-mumbai',
       severity: 'warning' as const,
-      title: 'IMD Red Warning: Intense Rainfall & Urban Flooding',
+      title: 'Red Warning: Intense Rainfall & Urban Flooding',
       description: 'Extremely heavy spells expected over the next 4 hours. Low-lying railway lines (Hindmata, Kurla, Sion) report water stagnation. Avoid two-wheeler commute.',
       impact_level: 'severe',
       affected_area: 'Mumbai Metropolitan Region (MMR)',
       effective_from: 'Now',
       effective_to: '21:00 IST',
-      source: 'IMD Regional Meteorological Centre, Mumbai',
+      source: 'Regional Meteorological Centre, Mumbai',
     },
     marine: {
       is_coastal: true,
@@ -132,13 +132,13 @@ export const DEMO_SCENARIOS: Record<string, any> = {
     alert: {
       id: 'cpcb-delhi-smog',
       severity: 'warning' as const,
-      title: 'CPCB / IMD Health Warning: GRAP Stage IV Severe Smog',
+      title: 'Health Warning: GRAP Stage IV Severe Smog',
       description: 'AQI has crossed 380 (Severe). Surface inversion is trapping vehicular emissions. Outdoor strenuous exercise strongly discouraged. N95 respirator mandatory.',
       impact_level: 'severe',
       affected_area: 'Delhi NCR, Noida, Gurugram',
       effective_from: 'Now',
       effective_to: '11:00 AM Tomorrow',
-      source: 'Central Pollution Control Board & IMD Safdarjung',
+      source: 'Central Pollution Control Board',
     },
     marine: null,
   },
@@ -184,15 +184,15 @@ export const DEMO_SCENARIOS: Record<string, any> = {
     pm10: 160.0,
     visibility: 8.0,
     alert: {
-      id: 'imd-orange-heatwave',
+      id: 'orange-heatwave',
       severity: 'warning' as const,
-      title: 'IMD Orange Alert: Severe Heatwave Conditions',
+      title: 'Orange Alert: Severe Heatwave Conditions',
       description: 'Peak surface temperature reaching 44°C. Severe heat illness threat for vulnerable populations and outdoor laborers. Avoid exposure between 11:30 AM and 16:00 PM.',
       impact_level: 'high',
       affected_area: 'Western & North-Eastern Rajasthan',
       effective_from: '11:00 IST',
       effective_to: '17:00 IST',
-      source: 'IMD Meteorological Centre, Jaipur',
+      source: 'Regional Meteorological Centre, Jaipur',
     },
     marine: null,
   },
@@ -216,15 +216,15 @@ export const DEMO_SCENARIOS: Record<string, any> = {
     pm10: 22.0,
     visibility: 3.0,
     alert: {
-      id: 'imd-cyclone-chennai',
+      id: 'cyclone-chennai',
       severity: 'warning' as const,
-      title: 'IMD Cyclone Warning: Deep Depression Approaching Coast',
+      title: 'Cyclone Warning: Deep Depression Approaching Coast',
       description: 'Gale wind speeds 55-65 km/h gusting to 75 km/h. High sea swell and tidal surge of 1.0m. Localized inundation expected.',
       impact_level: 'severe',
       affected_area: 'North Tamil Nadu & South Andhra Coast',
       effective_from: 'Now',
       effective_to: 'Next 12 Hours',
-      source: 'Cyclone Warning Centre, IMD Chennai',
+      source: 'Cyclone Warning Centre, Chennai',
     },
     marine: {
       is_coastal: true,
@@ -479,7 +479,7 @@ export async function fetchLiveWeather(
       affected_area: resolvedName || 'Local Region',
       effective_from: 'Now',
       effective_to: 'Next 4 Hours',
-      source: 'IMD Nowcast Telemetry',
+      source: 'National Nowcast Telemetry',
     });
   }
   if (aqiVal > 250) {
@@ -492,7 +492,7 @@ export async function fetchLiveWeather(
       affected_area: resolvedName || 'Metropolitan Area',
       effective_from: 'Now',
       effective_to: 'Tomorrow Morning',
-      source: 'Central Pollution Control Board / MoES',
+      source: 'Central Pollution Control Board',
     });
   }
   if (rainAmount > 5.0 || rainProb > 70) {
@@ -505,7 +505,7 @@ export async function fetchLiveWeather(
       affected_area: resolvedName || 'Local Area',
       effective_from: 'Immediate',
       effective_to: 'Next 3 Hours',
-      source: 'IMD Radar Doppler Unit',
+      source: 'Doppler Radar Unit',
     });
   }
 

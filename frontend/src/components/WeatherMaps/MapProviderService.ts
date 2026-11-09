@@ -38,7 +38,7 @@ export interface MapStationTelemetry {
 export const LIVE_INDIAN_STATIONS: MapStationTelemetry[] = [
   { name: 'Delhi', fullName: 'New Delhi (Mausam Bhawan)', state: 'Delhi NCR', lat: 28.6139, lon: 77.2090, temp: 38, condition: 'Hazy Sun', windSpeed: 14, aqi: 184, radarIntensity: 'Clear' },
   { name: 'Mumbai', fullName: 'Mumbai (Colaba Coastal)', state: 'Maharashtra', lat: 19.0760, lon: 72.8777, temp: 31, condition: 'Humid Haze', windSpeed: 18, aqi: 92, radarIntensity: 'Scattered' },
-  { name: 'Pune', fullName: 'Pune (Shivajinagar IMD)', state: 'Maharashtra', lat: 18.5204, lon: 73.8567, temp: 30, condition: 'Partly Cloudy', windSpeed: 12, aqi: 88, radarIntensity: 'Isolated' },
+  { name: 'Pune', fullName: 'Pune (Shivajinagar Observatory)', state: 'Maharashtra', lat: 18.5204, lon: 73.8567, temp: 30, condition: 'Partly Cloudy', windSpeed: 12, aqi: 88, radarIntensity: 'Isolated' },
   { name: 'Bengaluru', fullName: 'Bengaluru (Peenya Met)', state: 'Karnataka', lat: 12.9716, lon: 77.5946, temp: 28, condition: 'Gentle Breeze', windSpeed: 15, aqi: 64, radarIntensity: 'Light Rain' },
   { name: 'Chennai', fullName: 'Chennai (Port Coastal DWR)', state: 'Tamil Nadu', lat: 13.0827, lon: 80.2707, temp: 33, condition: 'Tropical Sun', windSpeed: 21, aqi: 76, radarIntensity: 'Coastal Band' },
   { name: 'Kolkata', fullName: 'Kolkata (Alipore DWR)', state: 'West Bengal', lat: 22.5726, lon: 88.3639, temp: 34, condition: 'Humid Overcast', windSpeed: 11, aqi: 112, radarIntensity: 'Convective' },
