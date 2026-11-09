@@ -87,27 +87,15 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Top Identity & Location Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
         
-        {/* Primary MAUSAM Branding */}
+        {/* Primary VayuSync Branding */}
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 via-blue-700 to-indigo-800 flex items-center justify-center shadow-lg shadow-sky-500/20 text-white font-extrabold">
             <CloudSun className="w-6 h-6" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="font-black text-xl sm:text-2xl tracking-wider text-[#0B1F33] dark:text-white uppercase font-sans">
-                {t.app_title}
-              </h1>
-              <span className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-semibold tracking-wider uppercase rounded-full bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800">
-                {t.nav_official_weather}
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1.5">
-              <span>{t.app_subtitle}</span>
-              <span className="text-slate-300 dark:text-slate-600">•</span>
-              <span className="text-sky-600 dark:text-sky-400 flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-amber-500" /> {t.portal_tag}
-              </span>
-            </p>
+            <h1 className="font-black text-xl sm:text-2xl tracking-wider text-[#0B1F33] dark:text-white uppercase font-sans">
+              {t.app_title}
+            </h1>
           </div>
         </div>
 
