@@ -293,7 +293,12 @@ export const VayuSyncPersonalized: React.FC<VayuSyncPersonalizedProps> = ({
         )}
       </div>
 
-      {/* ── SCREEN 3: ROLE INTELLIGENCE HERO (Circular Score Gauge + Key Stats) ── */}
+      {/* ── 2-COLUMN SPLIT ON DESKTOP: ROLE INTELLIGENCE & DECISION SUITE ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        
+        {/* LEFT COLUMN: Role Hero, Conflicts & Persona Modules */}
+        <div className="space-y-6">
+          {/* ── SCREEN 3: ROLE INTELLIGENCE HERO (Circular Score Gauge + Key Stats) ── */}
       <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-[0_4px_25px_-4px_rgba(15,184,141,0.08)] p-6 space-y-5">
         
         {/* Top: Score Gauge on left + 4 Key Stats on right */}
@@ -555,31 +560,36 @@ export const VayuSyncPersonalized: React.FC<VayuSyncPersonalizedProps> = ({
               return <CommuteIntelligenceCard key={roleId} weather={weather} intelligence={intelligence} context={context} />;
           }
         })}
+          </div>
+        </div>
 
-      </div>
+        {/* RIGHT COLUMN: Scores, Decisions & Routine Timeline */}
+        <div className="space-y-6">
+          {/* ── 4. HERO MAUSAM SCORE CARD ──────────────────────────────────────── */}
+          <MausamScoreCard
+            weather={weather}
+            intelligence={intelligence}
+            context={context}
+          />
 
-      {/* ── 4. HERO MAUSAM SCORE CARD ──────────────────────────────────────── */}
-      <MausamScoreCard
-        weather={weather}
-        intelligence={intelligence}
-        context={context}
-      />
+          {/* ── 5. PERSONA-SPECIFIC DECISION ENGINE (SHOULD-I?) ────────────────── */}
+          <ShouldIEngine
+            weather={weather}
+            context={context}
+            activePersonaId={activePersonaId}
+          />
 
-      {/* ── 5. PERSONA-SPECIFIC DECISION ENGINE (SHOULD-I?) ────────────────── */}
-      <ShouldIEngine
-        weather={weather}
-        context={context}
-        activePersonaId={activePersonaId}
-      />
+          {/* ── 6. PERSONA-AWARE ROUTINE TIMELINE ("YOUR TRAVEL DAY", ETC.) ────── */}
+          <div id="hourly" className="scroll-mt-28">
+            <RoutineTimeline
+              weather={weather}
+              intelligence={intelligence}
+              context={context}
+              activePersonaId={activePersonaId}
+            />
+          </div>
+        </div>
 
-      {/* ── 6. PERSONA-AWARE ROUTINE TIMELINE ("YOUR TRAVEL DAY", ETC.) ────── */}
-      <div id="hourly" className="scroll-mt-28">
-        <RoutineTimeline
-          weather={weather}
-          intelligence={intelligence}
-          context={context}
-          activePersonaId={activePersonaId}
-        />
       </div>
 
       {/* ── 7. EXPLORE DETAILED METEOROLOGICAL ANALYTICS (EXPANDABLE DECK) ─── */}

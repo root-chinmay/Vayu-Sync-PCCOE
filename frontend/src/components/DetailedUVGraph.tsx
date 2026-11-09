@@ -190,7 +190,7 @@ export const DetailedUVGraph: React.FC<DetailedUVGraphProps> = ({ hourly, curren
 
       {/* SVG Interactive Chart */}
       <div className="relative w-full overflow-x-auto">
-        <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto min-w-[620px] select-none">
+        <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto min-w-[480px] select-none">
           <defs>
             <linearGradient id="uvGradient" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.30" />

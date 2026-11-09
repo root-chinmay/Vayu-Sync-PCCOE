@@ -150,118 +150,129 @@ export const StandardMausam: React.FC<StandardMausamProps> = ({
         )}
       </div>
 
-      {/* 3. VayuSync Primary Weather Hero, Role Score & Highlights (Screen 1 & 3 Design) */}
-      <div id="overview" className="scroll-mt-28">
-        <VayuSyncHeroCard
-          weather={weather}
-          intelligence={intelligence}
-          context={context}
-          onOpenRoleDetail={onEnablePersonalizedMode}
-          onOpenPersonalizeModal={onOpenPersonalizeModal}
-        />
-      </div>
-
-      {/* 4. Detailed Solar UV Index Graph (Compulsory Feature) */}
-      <div id="uv-analytics">
-        <DetailedUVGraph
-          hourly={hourly}
-          currentUV={curr.uv_index || 0}
-        />
-      </div>
-
-      {/* 5. Detailed Color-Coded Multi-Metric Graphs (Blue/Green/Amber/Red) */}
-      <div id="metric-graphs">
-        <DetailedColorCodedGraphs
-          hourly={hourly}
-        />
-      </div>
-
-      {/* 6. Visibility Intelligence & Role Guidance */}
-      <div id="visibility">
-        <VisibilityCard
-          visibilityIntel={visibilityIntel}
-          currentVisibilityKm={curr.visibility}
-        />
-      </div>
-
-      {/* 7. Event & Outdoor Sunlight Planner */}
-      <div id="event-planner">
-        <EventPlannerCard
-          eventIntel={eventIntel}
-          sunrise={curr.sunrise}
-          sunset={curr.sunset}
-          daylightDuration={daily[0]?.daylight_duration}
-        />
-      </div>
-
-      {/* 8. Hourly Forecast Rail */}
-      <div id="hourly" className="rounded-2xl glass-panel p-5 sm:p-6 space-y-4 shadow-sm border border-sky-100 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 scroll-mt-28">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">
-            {t.forecast_24h_title}
-          </h3>
-          <span className="text-xs text-slate-500 dark:text-slate-400">{t.forecast_hourly_res}</span>
-        </div>
-
-        <div className="w-full overflow-x-auto pb-2">
-          <div className="flex items-center gap-2 min-w-[720px]">
-            {hourly.slice(0, 16).map((h, i) => (
-              <div
-                key={i}
-                className="flex-1 min-w-[65px] p-2.5 rounded-xl text-center bg-white dark:bg-slate-800/80 border border-sky-100 dark:border-slate-700/80 shadow-xs space-y-1"
-              >
-                <p className="text-[10px] font-mono text-slate-500 dark:text-slate-400">
-                  {h.time.split('T').pop()?.slice(0, 5) || `${h.hour}:00`}
-                </p>
-                <p className="text-xs font-bold text-slate-900 dark:text-white">
-                  {Math.round(h.temperature)}°
-                </p>
-                <div className="w-full bg-slate-100 dark:bg-slate-700 h-1 rounded-full overflow-hidden mt-1">
-                  <div
-                    className={`h-full ${h.precipitation_probability > 40 ? 'bg-sky-500 dark:bg-sky-400' : 'bg-slate-300 dark:bg-slate-600'}`}
-                    style={{ width: `${h.precipitation_probability}%` }}
-                  />
-                </div>
-                <p className="text-[9px] text-slate-500 dark:text-slate-400 font-medium">
-                  {h.precipitation_probability}%
-                </p>
-              </div>
-            ))}
+      {/* 2-Column Split: Left for Primary Overview & Forecasts, Right for Detailed Analytics Decks */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        
+        {/* LEFT COLUMN: Overview, Hero Card, Hourly Rail & 7-Day Forecast */}
+        <div className="space-y-6">
+          {/* 3. VayuSync Primary Weather Hero, Role Score & Highlights (Screen 1 & 3 Design) */}
+          <div id="overview" className="scroll-mt-28">
+            <VayuSyncHeroCard
+              weather={weather}
+              intelligence={intelligence}
+              context={context}
+              onOpenRoleDetail={onEnablePersonalizedMode}
+              onOpenPersonalizeModal={onOpenPersonalizeModal}
+            />
           </div>
-        </div>
-      </div>
 
-      {/* 9. 7-Day Weather Outlook */}
-      <div id="daily" className="rounded-2xl glass-panel p-5 sm:p-6 space-y-4 shadow-sm border border-sky-100 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 scroll-mt-28">
-        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">
-          {t.forecast_7d_title}
-        </h3>
+          {/* 8. Hourly Forecast Rail */}
+          <div id="hourly" className="rounded-2xl glass-panel p-5 sm:p-6 space-y-4 shadow-sm border border-sky-100 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 scroll-mt-28">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">
+                {t.forecast_24h_title}
+              </h3>
+              <span className="text-xs text-slate-500 dark:text-slate-400">{t.forecast_hourly_res}</span>
+            </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {daily.map((d, i) => (
-            <div
-              key={i}
-              className="p-3.5 rounded-xl bg-white dark:bg-slate-800/80 border border-sky-100 dark:border-slate-700/80 shadow-xs flex items-center justify-between"
-            >
-              <div>
-                <p className="text-xs font-bold text-slate-900 dark:text-white">{getLocalizedWeekday(d.day_name, language)}</p>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-[120px]">{getLocalizedWeatherCondition(d.condition_text, language)}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-xs font-bold text-slate-900 dark:text-white">
-                  {Math.round(d.temp_max)}° <span className="text-slate-400 dark:text-slate-500 font-normal">/ {Math.round(d.temp_min)}°</span>
-                </p>
-                <p className="text-[10px] text-sky-600 dark:text-sky-400 font-medium">
-                  {d.precipitation_probability}% {t.forecast_rain_suffix}
-                </p>
+            <div className="w-full overflow-x-auto pb-2">
+              <div className="flex items-center gap-2 min-w-[500px]">
+                {hourly.slice(0, 16).map((h, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 min-w-[60px] p-2.5 rounded-xl text-center bg-white dark:bg-slate-800/80 border border-sky-100 dark:border-slate-700/80 shadow-xs space-y-1"
+                  >
+                    <p className="text-[10px] font-mono text-slate-500 dark:text-slate-400">
+                      {h.time.split('T').pop()?.slice(0, 5) || `${h.hour}:00`}
+                    </p>
+                    <p className="text-xs font-bold text-slate-900 dark:text-white">
+                      {Math.round(h.temperature)}°
+                    </p>
+                    <div className="w-full bg-slate-100 dark:bg-slate-700 h-1 rounded-full overflow-hidden mt-1">
+                      <div
+                        className={`h-full ${h.precipitation_probability > 40 ? 'bg-sky-500 dark:bg-sky-400' : 'bg-slate-300 dark:bg-slate-600'}`}
+                        style={{ width: `${h.precipitation_probability}%` }}
+                      />
+                    </div>
+                    <p className="text-[9px] text-slate-500 dark:text-slate-400 font-medium">
+                      {h.precipitation_probability}%
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
+          </div>
+
+          {/* 9. 7-Day Weather Outlook */}
+          <div id="daily" className="rounded-2xl glass-panel p-5 sm:p-6 space-y-4 shadow-sm border border-sky-100 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 scroll-mt-28">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">
+              {t.forecast_7d_title}
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {daily.map((d, i) => (
+                <div
+                  key={i}
+                  className="p-3.5 rounded-xl bg-white dark:bg-slate-800/80 border border-sky-100 dark:border-slate-700/80 shadow-xs flex items-center justify-between"
+                >
+                  <div>
+                    <p className="text-xs font-bold text-slate-900 dark:text-white">{getLocalizedWeekday(d.day_name, language)}</p>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-[120px]">{getLocalizedWeatherCondition(d.condition_text, language)}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-bold text-slate-900 dark:text-white">
+                      {Math.round(d.temp_max)}° <span className="text-slate-400 dark:text-slate-500 font-normal">/ {Math.round(d.temp_min)}°</span>
+                    </p>
+                    <p className="text-[10px] text-sky-600 dark:text-sky-400 font-medium">
+                      {d.precipitation_probability}% {t.forecast_rain_suffix}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
+
+        {/* RIGHT COLUMN: Detailed Analytics, UV Index, Multi-Metric Graphs, Visibility & Event Planner */}
+        <div className="space-y-6">
+          {/* 4. Detailed Solar UV Index Graph (Compulsory Feature) */}
+          <div id="uv-analytics">
+            <DetailedUVGraph
+              hourly={hourly}
+              currentUV={curr.uv_index || 0}
+            />
+          </div>
+
+          {/* 5. Detailed Color-Coded Multi-Metric Graphs (Blue/Green/Amber/Red) */}
+          <div id="metric-graphs">
+            <DetailedColorCodedGraphs
+              hourly={hourly}
+            />
+          </div>
+
+          {/* 6. Visibility Intelligence & Role Guidance */}
+          <div id="visibility">
+            <VisibilityCard
+              visibilityIntel={visibilityIntel}
+              currentVisibilityKm={curr.visibility}
+            />
+          </div>
+
+          {/* 7. Event & Outdoor Sunlight Planner */}
+          <div id="event-planner">
+            <EventPlannerCard
+              eventIntel={eventIntel}
+              sunrise={curr.sunrise}
+              sunset={curr.sunset}
+              daylightDuration={daily[0]?.daylight_duration}
+            />
+          </div>
+        </div>
+
       </div>
 
-      {/* 10. Interactive Weather Radar & Satellite Map */}
-      <div id="radar" className="scroll-mt-28">
+      {/* 10. Interactive Weather Radar & Satellite Map (Full-Width at Bottom) */}
+      <div id="radar" className="w-full scroll-mt-28">
         <WeatherMap
           currentLocation={loc}
           onSelectCoordinates={onSelectCity}
