@@ -601,16 +601,16 @@ export const VayuSyncPersonalized: React.FC<VayuSyncPersonalizedProps> = ({
               />
             </div>
           )}
-
-          {/* ── 8. 24-HOUR SOLAR UV ANALYTICS ─────────────────────────────────── */}
-          <div id="uv-analytics">
-            <DetailedUVGraph
-              hourly={weather.hourly || []}
-              currentUV={weather.current.uv_index || 0}
-            />
-          </div>
         </div>
 
+      </div>
+
+      {/* ── 8. 24-HOUR SOLAR UV ANALYTICS (EXPANDED FULL-WIDTH & CENTERED) ─── */}
+      <div id="uv-analytics" className="w-full scroll-mt-28">
+        <DetailedUVGraph
+          hourly={weather.hourly || []}
+          currentUV={weather.current.uv_index || 0}
+        />
       </div>
 
       {/* ── 9. EXPLORE DETAILED METEOROLOGICAL ANALYTICS (EXPANDABLE DECK) ─── */}
