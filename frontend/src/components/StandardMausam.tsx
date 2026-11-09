@@ -24,6 +24,7 @@ import { DetailedColorCodedGraphs } from './DetailedColorCodedGraphs';
 import { VisibilityCard } from './VisibilityCard';
 import { EventPlannerCard } from './EventPlannerCard';
 import { VayuSyncHeroCard } from './VayuSyncHeroCard';
+import { OutdoorActivitiesCompanion } from './OutdoorActivitiesCompanion';
 import { useLanguage } from '../hooks/useLanguage';
 import { getLocalizedWeatherCondition, getLocalizedWeekday } from '../lib/weatherConditions';
 
@@ -230,6 +231,16 @@ export const StandardMausam: React.FC<StandardMausamProps> = ({
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* 10. Outdoor Activities & Daily Essentials (Directly balances the Left Column against Event Planner) */}
+          <div id="activities" className="scroll-mt-28">
+            <OutdoorActivitiesCompanion
+              weather={weather}
+              intelligence={intelligence}
+              context={context}
+              onOpenPersonalize={onOpenPersonalizeModal}
+            />
           </div>
         </div>
 
