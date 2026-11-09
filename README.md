@@ -88,3 +88,23 @@ This runs both servers concurrently, monitors health, opens the browser, and cle
   - `OpenMeteoProvider` for live global and Indian telemetry without requiring API keys.
   - `MockWeatherProvider` for realistic Indian weather simulation scenarios.
 - **Database**: PostgreSQL schema support with zero-setup automatic SQLite local fallback.
+
+---
+
+## 4. Deployment Guide
+
+### Deploying Frontend to Vercel
+1. Import this repository into [Vercel](https://vercel.com/new).
+2. Under **Project Settings** > **General** > **Root Directory**:
+   - Set **Root Directory** to `frontend`
+3. Under **Environment Variables**, add:
+   - `NEXT_PUBLIC_API_URL`: URL of your deployed FastAPI backend (e.g., `https://your-backend.onrender.com` or backend server)
+4. Framework Preset will automatically be detected as **Next.js**.
+5. Click **Deploy**.
+
+### Deploying Backend (Render / Railway / Docker)
+A production-ready [Dockerfile](backend/Dockerfile) is provided in `backend/`:
+```bash
+docker build -t vayusync-backend ./backend
+docker run -p 8000:8000 vayusync-backend
+```
