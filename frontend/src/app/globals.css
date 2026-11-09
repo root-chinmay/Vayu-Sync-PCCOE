@@ -17,6 +17,11 @@
   --card-foreground: 210 40% 98%;
 }
 
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
 body {
   color: #0B1F33;
   background: linear-gradient(180deg, #EDF5FA 0%, #F4F8FB 50%, #EBF3F8 100%);
@@ -24,6 +29,15 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   overflow-x: hidden;
   transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Hide scrollbar for smooth touch-swipeable horizontal tabs */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .dark body,

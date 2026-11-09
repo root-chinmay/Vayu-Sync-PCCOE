@@ -25,7 +25,7 @@ export const LiveTelemetryBar: React.FC<LiveTelemetryBarProps> = ({
   const coordsMatch = Math.abs(weather.location.lat - selectedCity.lat) < 0.15 && Math.abs(weather.location.lon - selectedCity.lon) < 0.15;
 
   return (
-    <aside aria-label="Development Telemetry" className="fixed bottom-3 right-3 z-50 max-w-md w-full px-2 sm:px-0">
+    <aside aria-label="Development Telemetry" className="fixed bottom-3 right-3 z-40 max-w-[calc(100vw-24px)] sm:max-w-md w-full">
       <div className="rounded-2xl bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-800 shadow-2xl backdrop-blur-xl text-slate-900 dark:text-white overflow-hidden transition-all duration-300">
         
         {/* Toggle Bar */}
