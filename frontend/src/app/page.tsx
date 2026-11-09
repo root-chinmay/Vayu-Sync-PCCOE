@@ -31,7 +31,6 @@ import {
   fetchCities,
   reverseGeocodeLocation
 } from '../lib/api';
-import { LiveTelemetryBar } from '../components/LiveTelemetryBar';
 import { WaveGreetingBanner } from '../components/WaveGreetingBanner';
 import { BottomNavBar } from '../components/BottomNavBar';
 import { getPersonaConfig } from '../lib/personaConfig';
@@ -409,14 +408,6 @@ function MainApp() {
         onOpenPersonalizeModal={() => setIsPersonalizeOpen(true)}
         activeRoleTitle={getPersonaConfig(context.interests?.[0] || 'running').shortTitle}
         alertCount={weather?.alerts?.length || 0}
-      />
-
-      {/* Development & Audit Live Telemetry Bar */}
-      <LiveTelemetryBar
-        weather={weather}
-        selectedCity={currentCity}
-        isLoading={isLoading}
-        onRefresh={() => loadData(currentCity.lat, currentCity.lon, currentCity.name, activeScenario, context, true)}
       />
 
       {/* Help & Report / Contact & Feedback Modal */}
