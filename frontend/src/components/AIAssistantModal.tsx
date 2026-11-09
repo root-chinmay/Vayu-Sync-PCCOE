@@ -458,7 +458,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
       } else if (language === 'mr') {
         welcomeText = `नमस्कार ${context.name}! मी **वायुसिंक सहाय्यक** आहे, आपला वैयक्तिक हवामान एआय सोबती.\n\nमी सध्या **${displayLocation}** साठी हवामानाचे विश्लेषण करत आहे. आजचा अनुकूलता स्कोअर **${intelligence.mausam_score.score}/१०० (${intelligence.mausam_score.rating})** आहे.\n\nबोलण्यासाठी माइकवर टॅप करा किंवा खाली आपला प्रश्न विचारा!`;
       } else if (language === 'hi') {
-        welcomeText = `नमस्ते ${context.name}! मैं **वायुसिंक सहायक** हूँ, आपका मौसम साथी।\n\nमैं वर्तमान में **${displayLocation}** के लिए मौसम का विश्लेषण कर रहा हूँ। आज का अनुकूलता स्कोर **${intelligence.mausam_score.score}/100 (${intelligence.mausam_score.rating})** है।\n\nबोलने के लिए माइक पर टैप करें या अपना प्रश्न नीचे लिखें!`;
+        welcomeText = `नमस्ते ${context.name}! मैं **वायुसिंक सहायक** हूँ, आपका VayuSync साथी।\n\nमैं वर्तमान में **${displayLocation}** के लिए मौसम का विश्लेषण कर रहा हूँ। आज का अनुकूलता स्कोर **${intelligence.mausam_score.score}/100 (${intelligence.mausam_score.rating})** है।\n\nबोलने के लिए माइक पर टैप करें या अपना प्रश्न नीचे लिखें!`;
       }
 
       setMessages([

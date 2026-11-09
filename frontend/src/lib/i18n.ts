@@ -665,9 +665,9 @@ const en: Translations = {
   pers_date_required: 'Please select a date.',
   date_today: 'Today',
   date_clear: 'Clear',
-  app_title: "MAUSAM",
-  app_subtitle: "National Meteorological Intelligence Portal",
-  portal_tag: "VayuSync Hyperlocal Engine",
+  app_title: "VAYUSYNC",
+  app_subtitle: "Personalized Meteorological Intelligence Portal",
+  portal_tag: "Hyperlocal Weather Engine",
   tab_overview: "Standard Weather",
   tab_personalized: "Personalized Intelligence",
   tab_forecast: "7-Day Outlook",
@@ -740,7 +740,7 @@ const en: Translations = {
   status_poor: "Poor",
   status_hazardous: "Hazardous",
   onboarding_location_title: "Location Permission",
-  onboarding_location_desc: "Allow Mausam to access your device location to provide precision hyperlocal meteorological intelligence, flash-flood warnings, and micro-climate forecasting.",
+  onboarding_location_desc: "Allow VayuSync to access your device location to provide precision hyperlocal meteorological intelligence, flash-flood warnings, and micro-climate forecasting.",
   onboarding_accept: "Accept",
   onboarding_locating: "Locating Station...",
   onboarding_lang_title: "Select Your Language",
@@ -748,7 +748,7 @@ const en: Translations = {
   onboarding_search_lang: "Search language / भाषा खोजें...",
   onboarding_continue: "Continue",
   onboarding_selected: "Selected",
-  pers_title: "Personalize Your Mausam",
+  pers_title: "Personalize Your VayuSync",
   pers_subtitle: "Select citizen roles, primary weather hazards, and health sensitivities",
   pers_step1_title: "Step 1: Your Citizen Roles & Priorities",
   pers_step2_title: "Step 2: Role-Specific Preferences & Schedule",
@@ -1144,7 +1144,7 @@ const en: Translations = {
   family_outdoor_safe: "Safe for Outdoors",
   family_guidance_box_title: "Parental Guidance:",
   family_guidance_box_desc: "Ensure hydration and sun protection during outdoor playtime.",
-  krishi_title: "Krishi Mausam Intelligence",
+  krishi_title: "Krishi Weather Intelligence",
   krishi_subtitle: "Agromet crop protection, spraying safety, irrigation & field work.",
   krishi_role_badge: "Personalized Role",
   krishi_favorable: "Favorable Field Conditions",
@@ -3937,7 +3937,7 @@ const mai: Translations = {
 
 const sat: Translations = {
   ...hi,
-  app_title: "ᱦᱚᱭ-ᱦᱤᱥᱤᱫ (Mausam)",
+  app_title: "ᱦᱚᱭ-ᱦᱤᱥᱤᱫ (VayuSync)",
   app_subtitle: "ᱡᱟᱹᱛᱤᱭᱟᱹᱨᱤ ᱦᱚᱭ-ᱦᱤᱥᱤᱫ ᱯᱚᱨᱴᱟᱞ",
   tab_overview: "ᱦᱚᱭ-ᱦᱤᱥᱤᱫ",
   metric_temp: "ᱞᱚᱞᱚᱥᱚᱝ (Temp)",
@@ -3947,7 +3947,7 @@ const sat: Translations = {
 
 const brx: Translations = {
   ...hi,
-  app_title: "बारहावा (Mausam)",
+  app_title: "बारहावा (VayuSync)",
   app_subtitle: "हादरनि बारहावा पोर्टल",
   tab_overview: "गाहाय बारहावा",
   metric_temp: "दुंथाय (Temp)",
@@ -3956,7 +3956,7 @@ const brx: Translations = {
 
 const doi: Translations = {
   ...hi,
-  app_title: "मौसम",
+  app_title: "VayuSync",
   app_subtitle: "राष्ट्रीय मौसम पोर्टल",
   tab_overview: "मानक मौसम",
   tab_forecast: "७-दिनां दा हाल",
@@ -3964,14 +3964,14 @@ const doi: Translations = {
 
 const sd: Translations = {
   ...ur,
-  app_title: "موسم / सिन्धी मौसम",
+  app_title: "VayuSync / सिन्धी",
   app_subtitle: "قومي موسمي پورٽل",
   tab_overview: "بنيادي موسم",
 };
 
 const mni: Translations = {
   ...bn,
-  app_title: "ꯅꯣꯡ-ꯅꯨꯡꯁꯤꯠ (Mausam)",
+  app_title: "ꯅꯣꯡ-ꯅꯨꯡꯁꯤꯠ (VayuSync)",
   app_subtitle: "নেস্নেল ৱেদার পোৰ্টেল",
   tab_overview: "নোং-নুংশিৎ ফিভম",
 };

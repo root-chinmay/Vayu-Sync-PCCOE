@@ -135,7 +135,7 @@ export const JudgeDemoDrawer: React.FC<JudgeDemoDrawerProps> = ({
                   <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
                     Evaluator Demo Controls
                     <span className="px-2 py-0.5 text-[9px] font-bold rounded-md bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50">
-                      SIH 2026
+                      Simulation Mode
                     </span>
                   </h3>
                   <p className="text-[11px] text-slate-500 dark:text-slate-400">

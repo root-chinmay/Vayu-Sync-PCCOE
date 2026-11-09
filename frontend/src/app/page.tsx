@@ -272,10 +272,30 @@ function MainApp() {
   // Handle section scrolling
   const handleSelectSection = (sec: string) => {
     setActiveSection(sec);
-    const elem = document.getElementById(sec);
-    if (elem) {
-      elem.scrollIntoView({ behavior: 'smooth' });
+
+    if (sec === 'overview') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
+
+    // If the section doesn't exist in current mode, switch to standard mode so target exists
+    const elem = document.getElementById(sec);
+    if (!elem && activeMode === 'personalized') {
+      setActiveMode('standard');
+    }
+
+    setTimeout(() => {
+      const target = document.getElementById(sec);
+      if (target) {
+        const headerOffset = 110;
+        const elementPosition = target.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }, 60);
   };
 
   return (
@@ -294,7 +314,7 @@ function MainApp() {
         isPersonalized={context.is_personalized}
         activeSection={activeSection}
         onSelectSection={handleSelectSection}
-        providerName={weather?.provider || 'Mausam Data Standard'}
+        providerName={weather?.provider || 'VayuSync Data Standard'}
         isLiveLoading={isLoading}
         onRefresh={() => loadData(currentCity.lat, currentCity.lon, currentCity.name, activeScenario, context, true)}
       />
@@ -562,9 +582,9 @@ function MainApp() {
       <footer className="w-full border-t border-slate-200/80 dark:border-slate-800/80 bg-white/90 dark:bg-slate-950/90 py-6 mt-12 text-xs text-slate-500 dark:text-slate-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div>
-            <strong className="text-slate-800 dark:text-white">MAUSAM</strong>
+            <strong className="text-slate-800 dark:text-white">VAYUSYNC</strong>
             <span className="mx-2 text-slate-300 dark:text-slate-600">|</span>
-            <span>Powered by VayuSync Intelligence (SIH #26076)</span>
+            <span>Personalized Meteorological Intelligence Platform</span>
           </div>
           <div className="flex items-center gap-4 text-slate-500 dark:text-slate-400">
             <span>Dynamic Dual-Theme (Light / Dark)</span>

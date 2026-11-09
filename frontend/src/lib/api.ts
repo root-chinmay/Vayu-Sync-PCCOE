@@ -213,7 +213,7 @@ export async function askShouldI(
     verdict: 'CONDITIONAL',
     headline: 'Check local weather condition',
     reason: `Ambient temperature is ${weather.current.temperature}°C with ${weather.current.condition_text}.`,
-    tip: 'Monitor real-time radar updates on MAUSAM for sudden convective shifts.',
+    tip: 'Monitor real-time radar updates on VayuSync for sudden convective shifts.',
     confidence: 80,
     data_points: {
       'Temp': `${weather.current.temperature}°C`,
@@ -371,7 +371,7 @@ export async function fetchEmergencyContacts(): Promise<{ emergency_numbers: Eme
         priority: "high",
       },
       {
-        service: "IMD Mausam Seva (Weather Enquiry)",
+        service: "IMD Weather Seva (Weather Enquiry)",
         number: "1800-180-1717",
         badge: "Meteorological",
         description: "India Meteorological Department official public toll-free weather query line.",
@@ -417,7 +417,6 @@ export async function fetchEmergencyContacts(): Promise<{ emergency_numbers: Eme
         category: "Technical & Platform Support",
         contacts: [
           { title: "VayuSync Platform Desk", number: "support@vayusync.in", hours: "Email Response < 4 hrs" },
-          { title: "Smart India Hackathon Node #26076", number: "sih-support@mausam.gov.in", hours: "SIH Evaluation Desk" },
         ],
       },
     ],

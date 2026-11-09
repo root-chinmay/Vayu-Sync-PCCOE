@@ -224,7 +224,7 @@ export const HelpReportModal: React.FC<HelpReportModalProps> = ({
         app_version: '1.0.0',
         timestamp: new Date().toISOString(),
       });
-      setIssueSuccessTicket(res.ticket_number || 'MAUSAM-RESOLVED');
+      setIssueSuccessTicket(res.ticket_number || 'VAYUSYNC-RESOLVED');
       setIssueDesc('');
     } catch (err: any) {
       setIssueErrorMsg(err.message || 'Failed to submit report. Please try again.');
@@ -611,7 +611,7 @@ export const HelpReportModal: React.FC<HelpReportModalProps> = ({
                       maxLength={500}
                       value={fbComment}
                       onChange={(e) => setFbComment(e.target.value)}
-                      placeholder="Share your experience with MAUSAM forecasts, report local weather variations, or suggest enhancements..."
+                      placeholder="Share your experience with VayuSync forecasts, report local weather variations, or suggest enhancements..."
                       className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 leading-relaxed resize-none shadow-xs"
                     />
                   </div>

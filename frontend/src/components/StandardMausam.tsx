@@ -111,7 +111,7 @@ export const StandardMausam: React.FC<StandardMausamProps> = ({
       </div>
 
       {/* 2. Official Weather Warnings (IMD Protocol) */}
-      <div id="warnings" className="w-full">
+      <div id="warnings" className="w-full scroll-mt-28">
         {alerts.length > 0 ? (
           <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 flex items-start gap-3 text-slate-900 dark:text-slate-100 shadow-sm">
             <AlertTriangle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5 animate-pulse" />
@@ -138,8 +138,8 @@ export const StandardMausam: React.FC<StandardMausamProps> = ({
         )}
       </div>
 
-      {/* 3. Base Mausam Current Weather Hero Card */}
-      <div id="overview" className="rounded-3xl glass-panel p-6 sm:p-8 space-y-6 shadow-sm border border-sky-100 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70">
+      {/* 3. Base VayuSync Current Weather Hero Card */}
+      <div id="overview" className="rounded-3xl glass-panel p-6 sm:p-8 space-y-6 shadow-sm border border-sky-100 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 scroll-mt-28">
         
         {/* City & Main Numbers */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-sky-100 dark:border-slate-800 pb-6">
@@ -292,7 +292,7 @@ export const StandardMausam: React.FC<StandardMausamProps> = ({
       </div>
 
       {/* 8. Hourly Forecast Rail */}
-      <div id="hourly" className="rounded-2xl glass-panel p-5 sm:p-6 space-y-4 shadow-sm border border-sky-100 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70">
+      <div id="hourly" className="rounded-2xl glass-panel p-5 sm:p-6 space-y-4 shadow-sm border border-sky-100 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 scroll-mt-28">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">
             {t.forecast_24h_title}
@@ -329,7 +329,7 @@ export const StandardMausam: React.FC<StandardMausamProps> = ({
       </div>
 
       {/* 9. 7-Day Weather Outlook */}
-      <div id="daily" className="rounded-2xl glass-panel p-5 sm:p-6 space-y-4 shadow-sm border border-sky-100 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70">
+      <div id="daily" className="rounded-2xl glass-panel p-5 sm:p-6 space-y-4 shadow-sm border border-sky-100 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 scroll-mt-28">
         <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">
           {t.forecast_7d_title}
         </h3>
@@ -358,7 +358,7 @@ export const StandardMausam: React.FC<StandardMausamProps> = ({
       </div>
 
       {/* 10. Interactive Weather Radar & Satellite Map */}
-      <div id="radar">
+      <div id="radar" className="scroll-mt-28">
         <WeatherMap
           currentLocation={loc}
           onSelectCoordinates={onSelectCity}

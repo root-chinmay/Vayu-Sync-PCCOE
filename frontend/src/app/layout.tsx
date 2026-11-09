@@ -4,8 +4,8 @@ import { LanguageProvider } from '../hooks/useLanguage';
 import { ThemeProvider } from '../hooks/useTheme';
 
 export const metadata: Metadata = {
-  title: 'VayuSync — Personalized Mausam Intelligence',
-  description: 'Smart India Hackathon 2026 Prototype (Problem ID: 26076). Next-generation personalized homepage for Mausam.',
+  title: 'VayuSync — Personalized Weather Intelligence',
+  description: 'Next-generation personalized meteorological intelligence platform powered by VayuSync.',
   manifest: '/manifest.json',
   icons: {
     icon: '/favicon.ico',

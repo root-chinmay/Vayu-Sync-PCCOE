@@ -139,33 +139,18 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Right Controls: Theme Switcher, Language Switcher, Help & Report, Location, Refresh, Personalize */}
         <div className="flex items-center gap-2 sm:gap-2.5">
           
-          {/* Dual Theme Switcher */}
-          <div className="flex items-center bg-slate-100/90 dark:bg-slate-800/90 p-1 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm shrink-0">
-            <button
-              onClick={() => setTheme('light')}
-              className={`flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-semibold transition ${
-                !isDark
-                  ? 'bg-white text-sky-700 shadow-sm border border-slate-200'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-              title="Light Mode (दिन का दृश्य)"
-            >
-              <Sun className="w-3.5 h-3.5 text-amber-500" />
-              <span className="hidden md:inline">Light</span>
-            </button>
-            <button
-              onClick={() => setTheme('dark')}
-              className={`flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-semibold transition ${
-                isDark
-                  ? 'bg-slate-700 text-sky-300 shadow-sm border border-slate-600'
-                  : 'text-slate-500 hover:text-slate-900'
-              }`}
-              title="Dark Mode (रात का दृश्य)"
-            >
-              <Moon className="w-3.5 h-3.5 text-sky-400" />
-              <span className="hidden md:inline">Dark</span>
-            </button>
-          </div>
+          {/* Single Compact Theme Switcher */}
+          <button
+            onClick={() => setTheme(isDark ? 'light' : 'dark')}
+            className="p-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-sky-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 transition shadow-sm shrink-0"
+            title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          >
+            {isDark ? (
+              <Sun className="w-4 h-4 text-amber-400" />
+            ) : (
+              <Moon className="w-4 h-4 text-sky-600" />
+            )}
+          </button>
 
           {/* Language Selector (All 22 Official Indian Languages + English) */}
           <div className="relative" ref={langDropdownRef}>
@@ -367,65 +352,67 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Navigation Sub-Bar */}
-      <div className="bg-white/90 dark:bg-slate-950/90 border-t border-slate-200/80 dark:border-slate-800/80 px-4 sm:px-8 py-1.5 flex items-center justify-between text-xs">
-        
-        {/* Navigation Tabs */}
-        <nav className="flex items-center gap-1 sm:gap-2 overflow-x-auto py-0.5">
-          <button
-            onClick={() => onSelectSection('overview')}
-            className={`px-3 py-1 rounded-lg transition whitespace-nowrap ${
-              activeSection === 'overview' ? 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold border border-sky-200/60 dark:border-sky-800/60' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-900'
-            }`}
-          >
-            {t.nav_overview}
-          </button>
-          <button
-            onClick={() => onSelectSection('hourly')}
-            className={`px-3 py-1 rounded-lg transition whitespace-nowrap ${
-              activeSection === 'hourly' ? 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold border border-sky-200/60 dark:border-sky-800/60' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-900'
-            }`}
-          >
-            {t.nav_hourly}
-          </button>
-          <button
-            onClick={() => onSelectSection('daily')}
-            className={`px-3 py-1 rounded-lg transition whitespace-nowrap ${
-              activeSection === 'daily' ? 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold border border-sky-200/60 dark:border-sky-800/60' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-900'
-            }`}
-          >
-            {t.nav_daily}
-          </button>
-          <button
-            onClick={() => onSelectSection('radar')}
-            className={`px-3 py-1 rounded-lg transition whitespace-nowrap ${
-              activeSection === 'radar' ? 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold border border-sky-200/60 dark:border-sky-800/60' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-900'
-            }`}
-          >
-            {t.nav_radar}
-          </button>
-          <button
-            onClick={() => onSelectSection('warnings')}
-            className={`px-3 py-1 rounded-lg transition whitespace-nowrap ${
-              activeSection === 'warnings' ? 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold border border-sky-200/60 dark:border-sky-800/60' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-900'
-            }`}
-          >
-            {t.nav_warnings}
-          </button>
+      <div className="w-full border-t border-slate-200/80 dark:border-slate-800/80 bg-white/90 dark:bg-slate-950/90">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between text-xs w-full">
+          
+          {/* Navigation Tabs */}
+          <nav className="flex items-center gap-1 sm:gap-2 overflow-x-auto py-0.5">
+            <button
+              onClick={() => onSelectSection('overview')}
+              className={`px-3 py-1 rounded-lg transition whitespace-nowrap ${
+                activeSection === 'overview' ? 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold border border-sky-200/60 dark:border-sky-800/60' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-900'
+              }`}
+            >
+              {t.nav_overview}
+            </button>
+            <button
+              onClick={() => onSelectSection('hourly')}
+              className={`px-3 py-1 rounded-lg transition whitespace-nowrap ${
+                activeSection === 'hourly' ? 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold border border-sky-200/60 dark:border-sky-800/60' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-900'
+              }`}
+            >
+              {t.nav_hourly}
+            </button>
+            <button
+              onClick={() => onSelectSection('daily')}
+              className={`px-3 py-1 rounded-lg transition whitespace-nowrap ${
+                activeSection === 'daily' ? 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold border border-sky-200/60 dark:border-sky-800/60' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-900'
+              }`}
+            >
+              {t.nav_daily}
+            </button>
+            <button
+              onClick={() => onSelectSection('radar')}
+              className={`px-3 py-1 rounded-lg transition whitespace-nowrap ${
+                activeSection === 'radar' ? 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold border border-sky-200/60 dark:border-sky-800/60' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-900'
+              }`}
+            >
+              {t.nav_radar}
+            </button>
+            <button
+              onClick={() => onSelectSection('warnings')}
+              className={`px-3 py-1 rounded-lg transition whitespace-nowrap ${
+                activeSection === 'warnings' ? 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold border border-sky-200/60 dark:border-sky-800/60' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-900'
+              }`}
+            >
+              {t.nav_warnings}
+            </button>
 
-          {activeMode === 'personalized' && (
-            <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 whitespace-nowrap ml-2">
-              ✨ {language === 'hi' ? 'वायुसिंक सक्रिय' : language === 'mr' ? 'वायुसिंक सक्रिय' : language === 'bn' ? 'বায়ুসিঙ্ক সক্রিয়' : language === 'te' ? 'వాయుసింక్ యాక్టివ్' : 'VayuSync Active'}
-            </span>
-          )}
-        </nav>
+            {activeMode === 'personalized' && (
+              <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 whitespace-nowrap ml-2">
+                ✨ {language === 'hi' ? 'वायुसिंक सक्रिय' : language === 'mr' ? 'वायुसिंक सक्रिय' : language === 'bn' ? 'বায়ুসিঙ্ক সক্রিয়' : language === 'te' ? 'వాయుసింక్ యాక్టివ్' : 'VayuSync Active'}
+              </span>
+            )}
+          </nav>
 
-        {/* Source Telemetry Attribution */}
-        <div className="hidden lg:flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 font-mono">
-          <span>{language === 'hi' ? 'डेटा' : language === 'mr' ? 'माहिती' : language === 'bn' ? 'উপাত্ত' : language === 'te' ? 'డేటా' : 'Data'}: {providerName}</span>
-          <span>•</span>
-          <span>{language === 'hi' ? 'अपडेट: अभी' : language === 'mr' ? 'अपडेट: नुकतेच' : language === 'bn' ? 'হালনাগাদ: এইমাত্র' : language === 'te' ? 'నవీకరించబడింది: ఇప్పుడే' : 'Updated: Just now'}</span>
+          {/* Source Telemetry Attribution */}
+          <div className="hidden lg:flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+            <span>{language === 'hi' ? 'डेटा' : language === 'mr' ? 'माहिती' : language === 'bn' ? 'উপাত্ত' : language === 'te' ? 'డేటా' : 'Data'}: {providerName}</span>
+            <span>•</span>
+            <span>{language === 'hi' ? 'अपडेट: अभी' : language === 'mr' ? 'अपडेट: नुकतेच' : language === 'bn' ? 'হালনাগাদ: এইমাত্র' : language === 'te' ? 'నవీకరించబడింది: ఇప్పుడే' : 'Updated: Just now'}</span>
+          </div>
+
         </div>
-
       </div>
     </header>
   );

@@ -180,7 +180,7 @@ export const VayuSyncPersonalized: React.FC<VayuSyncPersonalizedProps> = ({
   };
 
   return (
-    <div className="w-full space-y-6">
+    <div id="overview" className="w-full space-y-6 scroll-mt-28">
       
       {/* ── 1. PERSONA HEADER (NO TECHNICAL WEIGHTING STRINGS) ──────────────── */}
       <div className="p-5 rounded-3xl glass-panel border border-sky-100 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 space-y-4 shadow-sm">
@@ -268,7 +268,7 @@ export const VayuSyncPersonalized: React.FC<VayuSyncPersonalizedProps> = ({
 
       {/* ── 2. CALENDAR WEATHER CONFLICT DETECTOR (ONLY IF CONFLICTS EXIST) ─── */}
       {conflicts.length > 0 && (
-        <div className="p-4 sm:p-5 rounded-3xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 shadow-sm space-y-3">
+        <div id="warnings" className="scroll-mt-28 p-4 sm:p-5 rounded-3xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 shadow-sm space-y-3">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300 font-bold text-sm">
               <AlertTriangle className="w-4 h-4 shrink-0" />
@@ -360,12 +360,14 @@ export const VayuSyncPersonalized: React.FC<VayuSyncPersonalizedProps> = ({
       />
 
       {/* ── 6. PERSONA-AWARE ROUTINE TIMELINE ("YOUR TRAVEL DAY", ETC.) ────── */}
-      <RoutineTimeline
-        weather={weather}
-        intelligence={intelligence}
-        context={context}
-        activePersonaId={activePersonaId}
-      />
+      <div id="hourly" className="scroll-mt-28">
+        <RoutineTimeline
+          weather={weather}
+          intelligence={intelligence}
+          context={context}
+          activePersonaId={activePersonaId}
+        />
+      </div>
 
       {/* ── 7. EXPLORE DETAILED METEOROLOGICAL ANALYTICS (EXPANDABLE DECK) ─── */}
       <div className="rounded-3xl glass-panel border border-sky-100 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 overflow-hidden shadow-sm">
