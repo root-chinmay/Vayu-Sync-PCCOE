@@ -52,6 +52,7 @@ import { HealthIntelligenceCard } from './HealthIntelligenceCard';
 import { EventPlannerIntelligenceCard } from './EventPlannerIntelligenceCard';
 import { DetailedUVGraph } from './DetailedUVGraph';
 import { DetailedColorCodedGraphs } from './DetailedColorCodedGraphs';
+import { WeatherMap } from './WeatherMap';
 import { useLanguage } from '../hooks/useLanguage';
 
 interface VayuSyncPersonalizedProps {
@@ -60,6 +61,7 @@ interface VayuSyncPersonalizedProps {
   context: UserContext;
   onOpenPersonalizeModal: () => void;
   onOpenAssistant?: () => void;
+  onSelectCity?: (city: { name: string; state?: string; lat: number; lon: number; default_persona: string }) => void;
 }
 
 export const VayuSyncPersonalized: React.FC<VayuSyncPersonalizedProps> = ({
@@ -68,6 +70,7 @@ export const VayuSyncPersonalized: React.FC<VayuSyncPersonalizedProps> = ({
   context,
   onOpenPersonalizeModal,
   onOpenAssistant,
+  onSelectCity,
 }) => {
   const { t } = useLanguage();
   const conflicts = intelligence.calendar_conflicts || [];
@@ -588,11 +591,29 @@ export const VayuSyncPersonalized: React.FC<VayuSyncPersonalizedProps> = ({
               activePersonaId={activePersonaId}
             />
           </div>
+
+          {/* ── 7. ALLERGY & RESPIRATORY HEALTH OUTLOOK (Directly balances against Fitness & Commute) ── */}
+          {intelligence.allergy_outlook && (
+            <div id="allergy-outlook">
+              <AllergyOutlookCard
+                allergyOutlook={intelligence.allergy_outlook}
+                userSensitivities={context.priorities || []}
+              />
+            </div>
+          )}
+
+          {/* ── 8. 24-HOUR SOLAR UV ANALYTICS ─────────────────────────────────── */}
+          <div id="uv-analytics">
+            <DetailedUVGraph
+              hourly={weather.hourly || []}
+              currentUV={weather.current.uv_index || 0}
+            />
+          </div>
         </div>
 
       </div>
 
-      {/* ── 7. EXPLORE DETAILED METEOROLOGICAL ANALYTICS (EXPANDABLE DECK) ─── */}
+      {/* ── 9. EXPLORE DETAILED METEOROLOGICAL ANALYTICS (EXPANDABLE DECK) ─── */}
       <div className="rounded-3xl glass-panel border border-sky-100 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 overflow-hidden shadow-sm">
         <button
           onClick={() => setShowDetailedAnalytics(!showDetailedAnalytics)}
@@ -610,7 +631,7 @@ export const VayuSyncPersonalized: React.FC<VayuSyncPersonalizedProps> = ({
                 </span>
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                24h UV curves, multi-metric color-coded graphs, and domain decks
+                Multi-metric color-coded graphs and domain decks
               </p>
             </div>
           </div>
@@ -623,12 +644,6 @@ export const VayuSyncPersonalized: React.FC<VayuSyncPersonalizedProps> = ({
 
         {showDetailedAnalytics && (
           <div className="p-4 sm:p-6 space-y-6 border-t border-sky-100 dark:border-slate-800 bg-sky-50/20 dark:bg-slate-950/40 animate-in fade-in">
-            {/* 24h UV Index Analytics */}
-            <DetailedUVGraph
-              hourly={weather.hourly || []}
-              currentUV={weather.current.uv_index || 0}
-            />
-
             {/* Detailed Multi-Metric Color-Coded Curves */}
             <DetailedColorCodedGraphs
               hourly={weather.hourly || []}
@@ -642,6 +657,14 @@ export const VayuSyncPersonalized: React.FC<VayuSyncPersonalizedProps> = ({
             />
           </div>
         )}
+      </div>
+
+      {/* ── 10. INTERACTIVE WEATHER RADAR & SATELLITE MAP (FULL WIDTH AT BOTTOM) ── */}
+      <div id="radar" className="w-full scroll-mt-28">
+        <WeatherMap
+          currentLocation={weather.location}
+          onSelectCoordinates={onSelectCity}
+        />
       </div>
 
     </div>

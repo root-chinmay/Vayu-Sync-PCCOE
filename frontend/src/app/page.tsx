@@ -386,6 +386,7 @@ function MainApp() {
                   context={context}
                   onOpenPersonalizeModal={() => setIsPersonalizeOpen(true)}
                   onOpenAssistant={() => setIsAssistantOpen(true)}
+                  onSelectCity={handleSelectCity}
                 />
               )
             )}
