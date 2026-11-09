@@ -286,30 +286,80 @@ export const PersonalizationModal: React.FC<PersonalizationModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/40 dark:bg-black/60 backdrop-blur-md animate-in fade-in">
       <div className="relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden">
         
-        {/* Header */}
-        <div className="p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/90 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-200 dark:border-amber-800/50">
-              <SlidersHorizontal className="w-4 h-4" />
+        {/* Header with Stepper matching Screen 2 Design */}
+        <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col gap-4">
+          
+          {/* Top Title & Close Button */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <span className="font-extrabold text-xl tracking-tight text-[#0B1F33] dark:text-white font-sans">
+                Vayu<span className="text-[#0FB88D]">Sync</span>
+              </span>
             </div>
-            <div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                {t.pers_title}
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100/80 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50">
-                  {stage === 'general' ? t.pers_step1_title : t.pers_step2_title}
-                </span>
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                {t.pers_subtitle}
-              </p>
-            </div>
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-full text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-          >
-            <X className="w-5 h-5" />
-          </button>
+
+          {/* Stepper: Location -> Language -> Role -> Preferences */}
+          <div className="flex items-center justify-between max-w-md mx-auto w-full px-2">
+            
+            {/* Step 1: Location */}
+            <div className="flex flex-col items-center">
+              <div className="w-6 h-6 rounded-full bg-[#0FB88D] text-white flex items-center justify-center text-[10px] font-bold shadow-xs">
+                ✓
+              </div>
+              <span className="text-[10px] font-semibold text-[#0FB88D] mt-1">Location</span>
+            </div>
+            <div className="flex-1 h-0.5 bg-[#0FB88D] mx-2 -mt-4" />
+
+            {/* Step 2: Language */}
+            <div className="flex flex-col items-center">
+              <div className="w-6 h-6 rounded-full bg-[#0FB88D] text-white flex items-center justify-center text-[10px] font-bold shadow-xs">
+                ✓
+              </div>
+              <span className="text-[10px] font-semibold text-[#0FB88D] mt-1">Language</span>
+            </div>
+            <div className={`flex-1 h-0.5 mx-2 -mt-4 ${stage === 'role_questions' ? 'bg-[#0FB88D]' : 'bg-slate-200 dark:bg-slate-700'}`} />
+
+            {/* Step 3: Role */}
+            <div className="flex flex-col items-center">
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shadow-xs ${
+                stage === 'general' ? 'bg-[#0FB88D] text-white ring-4 ring-teal-100 dark:ring-teal-900/40' : 'bg-[#0FB88D] text-white'
+              }`}>
+                3
+              </div>
+              <span className="text-[10px] font-bold text-[#0FB88D] mt-1">Role</span>
+            </div>
+            <div className={`flex-1 h-0.5 mx-2 -mt-4 ${stage === 'role_questions' ? 'bg-[#0FB88D]' : 'bg-slate-200 dark:bg-slate-700'}`} />
+
+            {/* Step 4: Preferences */}
+            <div className="flex flex-col items-center">
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shadow-xs ${
+                stage === 'role_questions' ? 'bg-[#0FB88D] text-white ring-4 ring-teal-100 dark:ring-teal-900/40' : 'bg-slate-200 dark:bg-slate-800 text-slate-500'
+              }`}>
+                4
+              </div>
+              <span className={`text-[10px] font-semibold mt-1 ${stage === 'role_questions' ? 'text-[#0FB88D]' : 'text-slate-400'}`}>
+                Preferences
+              </span>
+            </div>
+
+          </div>
+
+          {/* Screen 2 Subtitle */}
+          <div className="text-left pt-1">
+            <h3 className="text-xl font-black text-[#0B1F33] dark:text-white tracking-tight">
+              {stage === 'general' ? 'Choose your role' : 'Role Preferences & Details'}
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              {stage === 'general' ? 'This helps us personalize your weather experience' : 'Fine-tune your schedule, priorities and sensitivities'}
+            </p>
+          </div>
+
         </div>
 
         {/* Warning Notification banner */}
@@ -325,18 +375,18 @@ export const PersonalizationModal: React.FC<PersonalizationModalProps> = ({
           
           {stage === 'general' ? (
             <>
-              {/* Section 1: Interests / Roles */}
-              <div className="space-y-2.5">
+              {/* Section 1: Choose Your Role (Matching Screen 2 Design) */}
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                     {t.pers_roles_heading}
                   </label>
-                  <span className={`text-[11px] font-semibold ${selectedInterests.length > 0 ? 'text-sky-600 dark:text-sky-400' : 'text-amber-600 dark:text-amber-400'}`}>
-                    {selectedInterests.length} / 3
+                  <span className={`text-[11px] font-bold ${selectedInterests.length > 0 ? 'text-[#0FB88D]' : 'text-amber-600 dark:text-amber-400'}`}>
+                    {selectedInterests.length} / 3 selected
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {INTEREST_OPTIONS.map((opt) => {
                     const Icon = opt.icon;
                     const isSelected = selectedInterests.includes(opt.id);
@@ -345,18 +395,54 @@ export const PersonalizationModal: React.FC<PersonalizationModalProps> = ({
                         key={opt.id}
                         type="button"
                         onClick={() => toggleInterest(opt.id)}
-                        className={`p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 transition ${
+                        className={`p-4 rounded-2xl border text-left flex items-start justify-between gap-3 transition relative group ${
                           isSelected
-                            ? 'bg-sky-50 dark:bg-sky-950/40 border-sky-400 dark:border-sky-500 text-sky-800 dark:text-sky-300 ring-1 ring-sky-400/40 shadow-xs'
-                            : 'bg-slate-50/80 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-sky-300 dark:hover:border-sky-600 hover:bg-sky-50/50 dark:hover:bg-sky-950/30 hover:text-slate-900 dark:hover:text-white'
+                            ? 'bg-[#E6F8F3] dark:bg-teal-950/50 border-[#0FB88D] text-slate-900 dark:text-white ring-2 ring-[#0FB88D]/30 shadow-sm'
+                            : 'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-teal-300 dark:hover:border-teal-700 hover:bg-slate-50 dark:hover:bg-slate-800'
                         }`}
                       >
-                        <Icon className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
-                        <span className="truncate">{opt.label}</span>
-                        {isSelected && <Check className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 ml-auto shrink-0" />}
+                        <div className="flex items-start gap-3">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition ${
+                            isSelected 
+                              ? 'bg-[#0FB88D] text-white shadow-xs' 
+                              : 'bg-teal-50 dark:bg-teal-950/60 text-[#0FB88D] border border-teal-100 dark:border-teal-900/60'
+                          }`}>
+                            <Icon className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="font-extrabold text-sm text-[#0B1F33] dark:text-white leading-tight">
+                              {opt.label}
+                            </p>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+                              {opt.desc}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Top-right Circular Check Badge */}
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 border transition ${
+                          isSelected
+                            ? 'bg-[#0FB88D] border-[#0FB88D] text-white'
+                            : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'
+                        }`}>
+                          {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                        </div>
                       </button>
                     );
                   })}
+                </div>
+
+                {/* "Your Personalized Homepage" Callout Box (Screen 2) */}
+                <div className="p-3.5 rounded-2xl bg-[#E6F8F3] dark:bg-teal-950/40 border border-teal-200/80 dark:border-teal-800/80 flex items-start gap-3 mt-2">
+                  <div className="w-8 h-8 rounded-xl bg-[#0FB88D] text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <Check className="w-4 h-4 stroke-[3]" />
+                  </div>
+                  <div className="text-xs">
+                    <h4 className="font-extrabold text-[#0B1F33] dark:text-white">Your Personalized Homepage</h4>
+                    <p className="text-slate-600 dark:text-slate-300 mt-0.5 leading-relaxed">
+                      We'll show you the most relevant weather insights based on your role and preferences.
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -841,16 +927,16 @@ export const PersonalizationModal: React.FC<PersonalizationModalProps> = ({
               <button
                 type="button"
                 onClick={handleSaveAndNext}
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white text-xs font-bold shadow-md shadow-sky-500/20 transition flex items-center gap-1.5"
+                className="px-6 py-2.5 rounded-2xl bg-[#0FB88D] hover:bg-[#0da07b] text-white text-xs font-bold shadow-md shadow-teal-500/20 transition flex items-center gap-2"
               >
-                <span>{t.pers_btn_save_next}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <span>Continue</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             ) : (
               <button
                 type="button"
                 onClick={handleFinalSaveAndApply}
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white text-xs font-bold shadow-md shadow-sky-500/20 transition"
+                className="px-6 py-2.5 rounded-2xl bg-[#0FB88D] hover:bg-[#0da07b] text-white text-xs font-bold shadow-md shadow-teal-500/20 transition"
               >
                 {t.pers_btn_save_apply}
               </button>

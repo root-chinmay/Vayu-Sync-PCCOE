@@ -17,17 +17,20 @@ import {
   CloudRain,
   MapPin
 } from 'lucide-react';
-import { WeatherResponse, EventPlanningIntelligence, VisibilityIntelligence } from '../lib/types';
+import { WeatherResponse, EventPlanningIntelligence, VisibilityIntelligence, IntelligenceSummary, UserContext } from '../lib/types';
 import { WeatherMap } from './WeatherMap';
 import { DetailedUVGraph } from './DetailedUVGraph';
 import { DetailedColorCodedGraphs } from './DetailedColorCodedGraphs';
 import { VisibilityCard } from './VisibilityCard';
 import { EventPlannerCard } from './EventPlannerCard';
+import { VayuSyncHeroCard } from './VayuSyncHeroCard';
 import { useLanguage } from '../hooks/useLanguage';
 import { getLocalizedWeatherCondition, getLocalizedWeekday } from '../lib/weatherConditions';
 
 interface StandardMausamProps {
   weather: WeatherResponse;
+  intelligence?: IntelligenceSummary | null;
+  context?: UserContext;
   eventIntel?: EventPlanningIntelligence | null;
   visibilityIntel?: VisibilityIntelligence | null;
   onSelectCity: (city: { name: string; state?: string; lat: number; lon: number; default_persona: string }) => void;
@@ -38,6 +41,15 @@ interface StandardMausamProps {
 
 export const StandardMausam: React.FC<StandardMausamProps> = ({
   weather,
+  intelligence,
+  context = { 
+    name: 'Neyan', 
+    is_personalized: false, 
+    interests: ['running'], 
+    priorities: ['rain', 'heat'], 
+    preferred_transit: 'two_wheeler', 
+    calendar_events: [] 
+  },
   eventIntel,
   visibilityIntel,
   onSelectCity,
@@ -138,124 +150,15 @@ export const StandardMausam: React.FC<StandardMausamProps> = ({
         )}
       </div>
 
-      {/* 3. Base VayuSync Current Weather Hero Card */}
-      <div id="overview" className="rounded-3xl glass-panel p-6 sm:p-8 space-y-6 shadow-sm border border-sky-100 dark:border-slate-800/80 bg-white/70 dark:bg-slate-900/70 scroll-mt-28">
-        
-        {/* City & Main Numbers */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-sky-100 dark:border-slate-800 pb-6">
-          <div>
-            <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-xs">
-              <MapPin className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
-              <span>{loc.state ? `${loc.state}, ` : ''}{loc.country || 'India'}</span>
-              <span>•</span>
-              <span className="font-mono">{formattedLocalTime} {loc.timezone_abbreviation || 'IST'}</span>
-            </div>
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0B1F33] dark:text-white mt-1">
-              {loc.name}
-            </h2>
-            <p className="text-base text-slate-600 dark:text-slate-300 font-medium mt-1">
-              {getLocalizedWeatherCondition(curr.condition_text, language)}
-            </p>
-          </div>
-
-          <div className="flex items-baseline gap-4">
-            <div className="text-6xl sm:text-7xl font-black text-[#0B1F33] dark:text-white tracking-tight">
-              {Math.round(curr.temperature)}°<span className="text-3xl text-slate-400 font-normal">C</span>
-            </div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 space-y-0.5">
-              <p>{t.metric_feels_like} <strong className="text-slate-800 dark:text-slate-200">{Math.round(curr.feels_like)}°C</strong></p>
-              {daily[0] && (
-                <p>{t.metric_high} <strong className="text-slate-800 dark:text-slate-200">{Math.round(daily[0].temp_max)}°</strong> • {t.metric_low} <strong className="text-slate-800 dark:text-slate-200">{Math.round(daily[0].temp_min)}°</strong></p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Meteorological Parameters Grid (8 Standard Parameters) */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          
-          <div className="p-3.5 rounded-xl bg-white dark:bg-slate-800/80 border border-sky-100 dark:border-slate-700/80 shadow-xs flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-sky-50 dark:bg-sky-950/60 flex items-center justify-center text-sky-600 dark:text-sky-400 shrink-0">
-              <Droplets className="w-4 h-4" />
-            </div>
-            <div>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400">{t.metric_humidity}</p>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">{curr.humidity}%</p>
-            </div>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-white dark:bg-slate-800/80 border border-sky-100 dark:border-slate-700/80 shadow-xs flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-teal-50 dark:bg-teal-950/60 flex items-center justify-center text-teal-600 dark:text-teal-400 shrink-0">
-              <Wind className="w-4 h-4" />
-            </div>
-            <div>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400">{t.metric_wind}</p>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">{curr.wind_speed} km/h</p>
-            </div>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-white dark:bg-slate-800/80 border border-sky-100 dark:border-slate-700/80 shadow-xs flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
-              <Gauge className="w-4 h-4" />
-            </div>
-            <div>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400">{t.metric_pressure}</p>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">{Math.round(curr.pressure)} hPa</p>
-            </div>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-white dark:bg-slate-800/80 border border-sky-100 dark:border-slate-700/80 shadow-xs flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0">
-              <Eye className="w-4 h-4" />
-            </div>
-            <div>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400">{t.metric_visibility}</p>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">{curr.visibility} km</p>
-            </div>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-white dark:bg-slate-800/80 border border-sky-100 dark:border-slate-700/80 shadow-xs flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-orange-50 dark:bg-orange-950/60 flex items-center justify-center text-orange-600 dark:text-orange-400 shrink-0">
-              <Sun className="w-4 h-4" />
-            </div>
-            <div>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400">{t.metric_uv}</p>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">{curr.uv_index}</p>
-            </div>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-white dark:bg-slate-800/80 border border-sky-100 dark:border-slate-700/80 shadow-xs flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
-              <CloudRain className="w-4 h-4" />
-            </div>
-            <div>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400">{t.metric_rain}</p>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">{curr.precipitation_probability}%</p>
-            </div>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-white dark:bg-slate-800/80 border border-sky-100 dark:border-slate-700/80 shadow-xs flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-yellow-50 dark:bg-yellow-950/60 flex items-center justify-center text-yellow-600 dark:text-yellow-400 shrink-0">
-              <Sunrise className="w-4 h-4" />
-            </div>
-            <div>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400">{t.metric_sunrise}</p>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">{curr.sunrise}</p>
-            </div>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-white dark:bg-slate-800/80 border border-sky-100 dark:border-slate-700/80 shadow-xs flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/60 flex items-center justify-center text-rose-600 dark:text-rose-400 shrink-0">
-              <Sunset className="w-4 h-4" />
-            </div>
-            <div>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400">{t.metric_sunset}</p>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">{curr.sunset}</p>
-            </div>
-          </div>
-
-        </div>
-
+      {/* 3. VayuSync Primary Weather Hero, Role Score & Highlights (Screen 1 & 3 Design) */}
+      <div id="overview" className="scroll-mt-28">
+        <VayuSyncHeroCard
+          weather={weather}
+          intelligence={intelligence}
+          context={context}
+          onOpenRoleDetail={onEnablePersonalizedMode}
+          onOpenPersonalizeModal={onOpenPersonalizeModal}
+        />
       </div>
 
       {/* 4. Detailed Solar UV Index Graph (Compulsory Feature) */}

@@ -33,6 +33,9 @@ import {
   reverseGeocodeLocation
 } from '../lib/api';
 import { LiveTelemetryBar } from '../components/LiveTelemetryBar';
+import { WaveGreetingBanner } from '../components/WaveGreetingBanner';
+import { BottomNavBar } from '../components/BottomNavBar';
+import { getPersonaConfig } from '../lib/personaConfig';
 
 const todayDateString = new Date().toISOString().split('T')[0];
 
@@ -320,7 +323,23 @@ function MainApp() {
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-6 pb-28">
+        
+        {/* Dynamic Wave Greeting Hero Banner (Screen 1 & Screen 3 Design) */}
+        {weather && (
+          <WaveGreetingBanner
+            userName={context?.name || 'Neyan'}
+            cityName={weather.location.name || currentCity.name}
+            weather={weather}
+            onOpenCitySelector={() => {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOpenPersonalizeModal={() => setIsPersonalizeOpen(true)}
+            onOpenAssistant={() => setIsAssistantOpen(true)}
+            onOpenAlerts={() => handleSelectSection('warnings')}
+            activeRoleTitle={getPersonaConfig(context.interests?.[0] || 'running').shortTitle}
+          />
+        )}
         
         {fetchError && !weather && (
           <div className="rounded-3xl glass-panel p-8 text-center space-y-4 max-w-xl mx-auto border border-rose-200 dark:border-rose-900/50 bg-white/80 dark:bg-slate-900/80">
@@ -333,7 +352,7 @@ function MainApp() {
             </p>
             <button
               onClick={() => loadData(currentCity.lat, currentCity.lon, currentCity.name, activeScenario, context, true)}
-              className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition"
+              className="px-4 py-2 rounded-xl bg-[#0FB88D] hover:bg-[#0da07b] text-white text-xs font-bold transition"
             >
               Retry Live Connection
             </button>
@@ -346,6 +365,8 @@ function MainApp() {
               /* State 1: Standard Mausam Official Weather Experience */
               <StandardMausam
                 weather={weather}
+                intelligence={intelligence}
+                context={context}
                 eventIntel={intelligence?.event_planning}
                 visibilityIntel={intelligence?.visibility_intel}
                 onSelectCity={handleSelectCity}
@@ -359,7 +380,7 @@ function MainApp() {
                 activeSection={activeSection}
               />
             ) : (
-              /* State 2: VayuSync Personalized Mausam Experience */
+              /* State 2: VayuSync Personalized Experience */
               intelligence && (
                 <VayuSyncPersonalized
                   weather={weather}
@@ -374,6 +395,22 @@ function MainApp() {
         )}
 
       </main>
+
+      {/* Floating Bottom Navigation Dock (Screen 1 & Screen 3 Design) */}
+      <BottomNavBar
+        activeTab={activeMode === 'personalized' ? 'activity' : activeSection}
+        onSelectTab={(tab) => {
+          if (tab === 'activity') {
+            setActiveMode('personalized');
+          } else {
+            setActiveMode('standard');
+            handleSelectSection(tab);
+          }
+        }}
+        onOpenPersonalizeModal={() => setIsPersonalizeOpen(true)}
+        activeRoleTitle={getPersonaConfig(context.interests?.[0] || 'running').shortTitle}
+        alertCount={weather?.alerts?.length || 0}
+      />
 
       {/* Development & Audit Live Telemetry Bar */}
       <LiveTelemetryBar
@@ -445,13 +482,38 @@ function MainApp() {
       {/* ── ONBOARDING MODAL 1: LOCATION PERMISSION (ONLY ACCEPT BUTTON) ────── */}
       {onboardingStep === 'location' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in">
-          <div className="relative w-full max-w-md p-6 sm:p-7 rounded-3xl bg-white/98 dark:bg-slate-900/98 backdrop-blur-2xl border border-sky-100 dark:border-slate-800 shadow-2xl space-y-6 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-800 flex items-center justify-center mx-auto shadow-sm">
-              <MapPin className="w-8 h-8 animate-bounce text-sky-600 dark:text-sky-400" />
+          <div className="relative w-full max-w-md p-6 sm:p-7 rounded-3xl bg-white/98 dark:bg-slate-900/98 backdrop-blur-2xl border border-teal-100 dark:border-slate-800 shadow-2xl space-y-5 text-center">
+            
+            {/* Stepper (Location Active) */}
+            <div className="flex items-center justify-between max-w-xs mx-auto w-full px-2">
+              <div className="flex flex-col items-center">
+                <div className="w-6 h-6 rounded-full bg-[#0FB88D] text-white flex items-center justify-center text-[10px] font-bold shadow-xs ring-4 ring-teal-100 dark:ring-teal-900/40">
+                  1
+                </div>
+                <span className="text-[10px] font-bold text-[#0FB88D] mt-1">Location</span>
+              </div>
+              <div className="flex-1 h-0.5 bg-slate-200 dark:bg-slate-700 mx-2 -mt-4" />
+              <div className="flex flex-col items-center opacity-40">
+                <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-500 flex items-center justify-center text-[10px] font-bold">
+                  2
+                </div>
+                <span className="text-[10px] font-semibold text-slate-400 mt-1">Language</span>
+              </div>
+              <div className="flex-1 h-0.5 bg-slate-200 dark:bg-slate-700 mx-2 -mt-4" />
+              <div className="flex flex-col items-center opacity-40">
+                <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-500 flex items-center justify-center text-[10px] font-bold">
+                  3
+                </div>
+                <span className="text-[10px] font-semibold text-slate-400 mt-1">Role</span>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <h3 className="text-xl font-bold text-[#0B1F33] dark:text-white tracking-tight">
+            <div className="w-16 h-16 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-[#0FB88D] border border-teal-200 dark:border-teal-800 flex items-center justify-center mx-auto shadow-sm">
+              <MapPin className="w-8 h-8 animate-bounce text-[#0FB88D]" />
+            </div>
+
+            <div className="space-y-1">
+              <h3 className="text-xl font-black text-[#0B1F33] dark:text-white tracking-tight">
                 {t.onboarding_location_title}
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -459,14 +521,14 @@ function MainApp() {
               </p>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-sky-50/70 dark:bg-slate-800/70 border border-sky-100 dark:border-slate-700 text-left space-y-2 text-xs">
-              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-medium">
-                <Navigation className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+            <div className="p-3.5 rounded-2xl bg-[#E6F8F3] dark:bg-teal-950/30 border border-teal-100 dark:border-teal-800 text-left space-y-2 text-xs">
+              <div className="flex items-center gap-2 text-teal-900 dark:text-teal-200 font-medium">
+                <Navigation className="w-3.5 h-3.5 text-[#0FB88D]" />
                 <span>Hyperlocal Doppler telemetry</span>
               </div>
-              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-medium">
-                <Sparkles className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
-                <span>Automated IMD station synchronization</span>
+              <div className="flex items-center gap-2 text-teal-900 dark:text-teal-200 font-medium">
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                <span>Automated station synchronization</span>
               </div>
             </div>
 
@@ -474,7 +536,7 @@ function MainApp() {
             <button
               onClick={handleAcceptLocation}
               disabled={isRequestingLocation}
-              className="w-full py-3 px-6 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-sm font-bold shadow-lg shadow-sky-500/25 transition flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-3.5 px-6 rounded-2xl bg-[#0FB88D] hover:bg-[#0da07b] text-white text-sm font-bold shadow-lg shadow-teal-500/25 transition flex items-center justify-center gap-2 cursor-pointer"
             >
               {isRequestingLocation ? (
                 <span>{t.onboarding_locating}</span>
@@ -492,20 +554,46 @@ function MainApp() {
       {/* ── ONBOARDING MODAL 2: LANGUAGE SELECTION (ALL 23 INDIAN LANGUAGES) ─ */}
       {onboardingStep === 'language' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in">
-          <div className="relative w-full max-w-lg rounded-3xl bg-white/98 dark:bg-slate-900/98 backdrop-blur-2xl border border-sky-100 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+          <div className="relative w-full max-w-lg rounded-3xl bg-white/98 dark:bg-slate-900/98 backdrop-blur-2xl border border-teal-100 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
             
             {/* Header */}
-            <div className="p-5 border-b border-slate-100 dark:border-slate-800 bg-sky-50/50 dark:bg-slate-800/50 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-sky-100 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-800 flex items-center justify-center">
-                <Globe className="w-5 h-5" />
+            <div className="p-5 border-b border-slate-100 dark:border-slate-800 bg-teal-50/50 dark:bg-slate-800/50 flex flex-col gap-3">
+              {/* Stepper (Language Active) */}
+              <div className="flex items-center justify-between max-w-xs mx-auto w-full px-2">
+                <div className="flex flex-col items-center">
+                  <div className="w-6 h-6 rounded-full bg-[#0FB88D] text-white flex items-center justify-center text-[10px] font-bold shadow-xs">
+                    ✓
+                  </div>
+                  <span className="text-[10px] font-semibold text-[#0FB88D] mt-1">Location</span>
+                </div>
+                <div className="flex-1 h-0.5 bg-[#0FB88D] mx-2 -mt-4" />
+                <div className="flex flex-col items-center">
+                  <div className="w-6 h-6 rounded-full bg-[#0FB88D] text-white flex items-center justify-center text-[10px] font-bold shadow-xs ring-4 ring-teal-100 dark:ring-teal-900/40">
+                    2
+                  </div>
+                  <span className="text-[10px] font-bold text-[#0FB88D] mt-1">Language</span>
+                </div>
+                <div className="flex-1 h-0.5 bg-slate-200 dark:bg-slate-700 mx-2 -mt-4" />
+                <div className="flex flex-col items-center opacity-40">
+                  <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-500 flex items-center justify-center text-[10px] font-bold">
+                    3
+                  </div>
+                  <span className="text-[10px] font-semibold text-slate-400 mt-1">Role</span>
+                </div>
               </div>
-              <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  {t.onboarding_lang_title}
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  {t.onboarding_lang_desc}
-                </p>
+
+              <div className="flex items-center gap-3 pt-1">
+                <div className="w-10 h-10 rounded-xl bg-teal-100 dark:bg-teal-950/60 text-[#0FB88D] border border-teal-200 dark:border-teal-800 flex items-center justify-center shrink-0">
+                  <Globe className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    {t.onboarding_lang_title}
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    {t.onboarding_lang_desc}
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -518,7 +606,7 @@ function MainApp() {
                   value={langSearchQuery}
                   onChange={(e) => setLangSearchQuery(e.target.value)}
                   placeholder={t.onboarding_search_lang}
-                  className="w-full pl-9 pr-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-sky-500"
+                  className="w-full pl-9 pr-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-teal-500"
                   autoFocus
                 />
               </div>
@@ -546,7 +634,7 @@ function MainApp() {
                     }}
                     className={`p-3 rounded-2xl border text-left flex items-center justify-between transition ${
                       isSelected
-                        ? 'bg-sky-50 dark:bg-sky-950/60 border-sky-500 text-sky-800 dark:text-sky-300 ring-1 ring-sky-500/40 shadow-sm'
+                        ? 'bg-[#E6F8F3] dark:bg-teal-950/60 border-[#0FB88D] text-teal-900 dark:text-teal-200 ring-2 ring-[#0FB88D]/40 shadow-sm'
                         : 'bg-white dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300'
                     }`}
                   >
@@ -554,7 +642,7 @@ function MainApp() {
                       <p className="font-bold text-xs text-slate-900 dark:text-white">{l.native}</p>
                       <p className="text-[10px] text-slate-500 dark:text-slate-400">{l.name} • {l.region}</p>
                     </div>
-                    {isSelected && <Check className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0 ml-2" />}
+                    {isSelected && <Check className="w-4 h-4 text-[#0FB88D] shrink-0 ml-2 stroke-[3]" />}
                   </button>
                 );
               })}
@@ -563,11 +651,11 @@ function MainApp() {
             {/* Footer Continue Button */}
             <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 flex items-center justify-between">
               <span className="text-xs text-slate-500 dark:text-slate-400">
-                {t.onboarding_selected}: <strong className="text-sky-700 dark:text-sky-400 uppercase font-mono">{tempSelectedLang}</strong>
+                {t.onboarding_selected}: <strong className="text-[#0FB88D] uppercase font-mono">{tempSelectedLang}</strong>
               </span>
               <button
                 onClick={handleCompleteLanguage}
-                className="px-6 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-xs font-bold shadow-md shadow-sky-500/20 transition flex items-center gap-1.5"
+                className="px-6 py-2.5 rounded-2xl bg-[#0FB88D] hover:bg-[#0da07b] text-white text-xs font-bold shadow-md shadow-teal-500/20 transition flex items-center gap-1.5"
               >
                 <span>{t.onboarding_continue}</span>
                 <ArrowRight className="w-3.5 h-3.5" />

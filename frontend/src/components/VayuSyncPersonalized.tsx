@@ -23,7 +23,11 @@ import {
   Eye,
   Wind,
   Thermometer,
-  CloudRain
+  CloudRain,
+  Sun,
+  Droplets,
+  Leaf,
+  ChevronRight
 } from 'lucide-react';
 import { 
   WeatherResponse, 
@@ -153,6 +157,29 @@ export const VayuSyncPersonalized: React.FC<VayuSyncPersonalizedProps> = ({
   const personaCfg = getPersonaConfig(activePersonaId);
   const PersonaIcon = personaCfg.icon;
 
+  // Screen 3 Activity Score calculation
+  const score = intelligence.mausam_score?.score || 82;
+  const ratingText = intelligence.mausam_score?.rating || 'Great conditions for outdoor activity!';
+  const radius = 34;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (score / 100) * circumference;
+
+  const next6Hours = React.useMemo(() => {
+    if (!weather.hourly || weather.hourly.length === 0) return [];
+    return weather.hourly.slice(0, 6).map((h, i) => {
+      let timeLabel = `${i + 1}h`;
+      try {
+        const d = new Date(h.time);
+        timeLabel = d.toLocaleTimeString([], { hour: 'numeric', hour12: true });
+      } catch {}
+      return {
+        time: timeLabel,
+        temp: Math.round(h.temperature),
+        pop: h.precipitation_probability || 0,
+      };
+    });
+  }, [weather.hourly]);
+
   // Helper context detail text
   const getContextDetailText = (id: string): string => {
     switch (id) {
@@ -253,7 +280,7 @@ export const VayuSyncPersonalized: React.FC<VayuSyncPersonalizedProps> = ({
                   onClick={() => setActivePersonaId(roleId)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition border ${
                     isActive
-                      ? `${rCfg.themeColor.bg} ${rCfg.themeColor.text} ${rCfg.themeColor.border} ring-1 ring-sky-400 shadow-xs`
+                      ? `bg-[#E6F8F3] dark:bg-teal-950/60 text-[#0FB88D] border-[#0FB88D] ring-2 ring-[#0FB88D]/30 shadow-xs`
                       : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-600 shadow-xs'
                   }`}
                 >
@@ -264,6 +291,192 @@ export const VayuSyncPersonalized: React.FC<VayuSyncPersonalizedProps> = ({
             })}
           </div>
         )}
+      </div>
+
+      {/* ── SCREEN 3: ROLE INTELLIGENCE HERO (Circular Score Gauge + Key Stats) ── */}
+      <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-[0_4px_25px_-4px_rgba(15,184,141,0.08)] p-6 space-y-5">
+        
+        {/* Top: Score Gauge on left + 4 Key Stats on right */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-5 border-b border-slate-100 dark:border-slate-800">
+          
+          {/* Circular Score Gauge */}
+          <div className="flex items-center gap-4">
+            <div className="relative flex items-center justify-center shrink-0">
+              <svg className="w-24 h-24 transform -rotate-90">
+                <circle
+                  cx="48"
+                  cy="48"
+                  r={radius}
+                  stroke="#E2E8F0"
+                  strokeWidth="7"
+                  fill="transparent"
+                  className="dark:stroke-slate-800"
+                />
+                <circle
+                  cx="48"
+                  cy="48"
+                  r={radius}
+                  stroke="#0FB88D"
+                  strokeWidth="7"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={strokeDashoffset}
+                  strokeLinecap="round"
+                  fill="transparent"
+                  className="transition-all duration-1000 ease-out"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-xl font-black text-[#0B1F33] dark:text-white leading-none">
+                  {score}
+                </span>
+                <span className="text-[10px] text-slate-400 font-bold leading-none mt-1">
+                  /100
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <span className="text-[10px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded bg-teal-50 dark:bg-teal-950/60 text-[#0FB88D] border border-teal-200 dark:border-teal-800">
+                {personaCfg.shortTitle} Score
+              </span>
+              <h3 className="text-lg font-black text-[#0B1F33] dark:text-white mt-1">
+                {ratingText}
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Conditions calculated for {weather.location.name}
+              </p>
+            </div>
+          </div>
+
+          {/* 4 Key Stats (Temperature, AQI, UV Index, Wind) */}
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 shrink-0 sm:min-w-[240px]">
+            <div className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
+              <span className="text-[10px] text-slate-400 font-semibold block flex items-center gap-1">
+                <Thermometer className="w-3 h-3 text-amber-500" /> Temperature
+              </span>
+              <span className="text-sm font-black text-slate-900 dark:text-white mt-0.5 block">
+                {Math.round(weather.current.temperature)}°C
+              </span>
+            </div>
+
+            <div className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
+              <span className="text-[10px] text-slate-400 font-semibold block flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3 text-emerald-500" /> AQI
+              </span>
+              <span className="text-sm font-black text-emerald-700 dark:text-emerald-400 mt-0.5 block">
+                {weather.current.aqi || 42} (Good)
+              </span>
+            </div>
+
+            <div className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
+              <span className="text-[10px] text-slate-400 font-semibold block flex items-center gap-1">
+                <Sun className="w-3 h-3 text-orange-500" /> UV Index
+              </span>
+              <span className="text-sm font-black text-slate-900 dark:text-white mt-0.5 block">
+                {weather.current.uv_index || 4} (Moderate)
+              </span>
+            </div>
+
+            <div className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
+              <span className="text-[10px] text-slate-400 font-semibold block flex items-center gap-1">
+                <Wind className="w-3 h-3 text-teal-500" /> Wind
+              </span>
+              <span className="text-sm font-black text-slate-900 dark:text-white mt-0.5 block">
+                {weather.current.wind_speed} km/h
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Next 6 Hours Hourly Strip */}
+        <div className="space-y-3 pt-1">
+          <div className="flex items-center justify-between">
+            <h4 className="text-xs sm:text-sm font-black text-[#0B1F33] dark:text-white tracking-tight">
+              Next 6 Hours
+            </h4>
+            <span className="text-[11px] font-semibold text-[#0FB88D]">
+              Micro-trend
+            </span>
+          </div>
+
+          <div className="grid grid-cols-6 gap-2 text-center divide-x divide-slate-100 dark:divide-slate-800">
+            {next6Hours.map((h, idx) => (
+              <div key={idx} className="flex flex-col items-center justify-center px-1">
+                <span className="text-[10px] sm:text-xs text-slate-400 font-semibold">{h.time}</span>
+                <div className="my-1.5 text-amber-500">
+                  {h.pop > 30 ? (
+                    <CloudRain className="w-4 h-4 text-sky-500 mx-auto" />
+                  ) : (
+                    <Sun className="w-4 h-4 text-amber-500 mx-auto" />
+                  )}
+                </div>
+                <span className="text-xs sm:text-sm font-black text-slate-800 dark:text-white">
+                  {h.temp}°
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Best Time Callout */}
+        <div className="p-3.5 rounded-2xl bg-[#E6F8F3] dark:bg-teal-950/40 border border-teal-200/80 dark:border-teal-800 flex items-center justify-between gap-3 text-xs sm:text-sm text-teal-900 dark:text-teal-200">
+          <div className="flex items-center gap-2 font-medium">
+            <div className="w-6 h-6 rounded-lg bg-[#0FB88D] text-white flex items-center justify-center shrink-0">
+              <Leaf className="w-3.5 h-3.5" />
+            </div>
+            <div>
+              <strong className="font-extrabold text-[#0B1F33] dark:text-white">
+                Best time for {personaCfg.shortTitle.toLowerCase()}:
+              </strong>{' '}
+              <span>6 AM – 9 AM (Lower UV & AQI)</span>
+            </div>
+          </div>
+          <ChevronRight className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+        </div>
+
+        {/* Detailed Weather Row */}
+        <div className="pt-2">
+          <div className="flex items-center justify-between pb-2">
+            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+              Detailed Weather
+            </h4>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 flex items-center gap-2.5">
+              <Droplets className="w-4 h-4 text-sky-500 shrink-0" />
+              <div>
+                <span className="text-[10px] text-slate-400 block font-medium">Humidity</span>
+                <span className="text-xs font-bold text-slate-800 dark:text-white">{weather.current.humidity}%</span>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 flex items-center gap-2.5">
+              <Wind className="w-4 h-4 text-teal-500 shrink-0" />
+              <div>
+                <span className="text-[10px] text-slate-400 block font-medium">Wind</span>
+                <span className="text-xs font-bold text-slate-800 dark:text-white">{weather.current.wind_speed} km/h</span>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 flex items-center gap-2.5">
+              <CloudRain className="w-4 h-4 text-blue-500 shrink-0" />
+              <div>
+                <span className="text-[10px] text-slate-400 block font-medium">Rain</span>
+                <span className="text-xs font-bold text-slate-800 dark:text-white">{weather.current.precipitation_probability || 0}%</span>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 flex items-center gap-2.5">
+              <Sun className="w-4 h-4 text-amber-500 shrink-0" />
+              <div>
+                <span className="text-[10px] text-slate-400 block font-medium">UV</span>
+                <span className="text-xs font-bold text-slate-800 dark:text-white">{weather.current.uv_index || 4} Moderate</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       {/* ── 2. CALENDAR WEATHER CONFLICT DETECTOR (ONLY IF CONFLICTS EXIST) ─── */}

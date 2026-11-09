@@ -24,6 +24,7 @@ import {
 import { Location } from '../lib/types';
 import { useLanguage } from '../hooks/useLanguage';
 import { useTheme } from '../hooks/useTheme';
+import { VayuSyncLogo } from './VayuSyncLogo';
 import { Language, ALL_INDIAN_LANGUAGES } from '../lib/i18n';
 
 interface HeaderProps {
@@ -88,16 +89,7 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2">
         
         {/* Primary VayuSync Branding */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-sky-600 via-blue-700 to-indigo-800 flex items-center justify-center shadow-lg shadow-sky-500/20 text-white font-extrabold shrink-0">
-            <CloudSun className="w-4 h-4 sm:w-6 sm:h-6" />
-          </div>
-          <div>
-            <h1 className="font-black text-lg sm:text-2xl tracking-wider text-[#0B1F33] dark:text-white uppercase font-sans">
-              {t.app_title}
-            </h1>
-          </div>
-        </div>
+        <VayuSyncLogo size={36} showTagline={false} />
 
         {/* Center: Dual Mode Switcher (Standard Mausam vs VayuSync Intelligence) - Visible on md+ */}
         <div className="hidden md:flex items-center bg-slate-100/90 dark:bg-slate-800/90 p-1 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm shrink-0">
@@ -115,8 +107,8 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={() => onToggleMode('personalized')}
             className={`px-2.5 sm:px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
               activeMode === 'personalized'
-                ? 'bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-md shadow-sky-500/20'
-                : 'text-sky-700 dark:text-sky-300 hover:text-sky-900 dark:hover:text-white'
+                ? 'bg-[#0FB88D] text-white shadow-md shadow-teal-500/20'
+                : 'text-teal-700 dark:text-teal-300 hover:text-teal-900 dark:hover:text-white'
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
@@ -358,8 +350,8 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={() => onToggleMode('personalized')}
             className={`py-1.5 text-xs font-semibold rounded-lg text-center flex items-center justify-center gap-1.5 transition ${
               activeMode === 'personalized'
-                ? 'bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-md font-bold'
-                : 'text-sky-700 dark:text-sky-300 hover:text-sky-900 dark:hover:text-white'
+                ? 'bg-[#0FB88D] text-white shadow-md font-bold'
+                : 'text-teal-700 dark:text-teal-300 hover:text-teal-900 dark:hover:text-white'
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
