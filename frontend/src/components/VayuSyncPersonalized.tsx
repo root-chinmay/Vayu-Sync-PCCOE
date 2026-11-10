@@ -32,7 +32,8 @@ import {
 import { 
   WeatherResponse, 
   IntelligenceSummary, 
-  UserContext 
+  UserContext,
+  HotspotReport
 } from '../lib/types';
 import { getPersonaConfig } from '../lib/personaConfig';
 import { MausamScoreCard } from './MausamScoreCard';
@@ -59,6 +60,7 @@ interface VayuSyncPersonalizedProps {
   weather: WeatherResponse;
   intelligence: IntelligenceSummary;
   context: UserContext;
+  hotspotReport?: HotspotReport | null;
   onOpenPersonalizeModal: () => void;
   onOpenAssistant?: () => void;
   onSelectCity?: (city: { name: string; state?: string; lat: number; lon: number; default_persona: string }) => void;
@@ -68,6 +70,7 @@ export const VayuSyncPersonalized: React.FC<VayuSyncPersonalizedProps> = ({
   weather,
   intelligence,
   context,
+  hotspotReport,
   onOpenPersonalizeModal,
   onOpenAssistant,
   onSelectCity,
@@ -546,7 +549,7 @@ export const VayuSyncPersonalized: React.FC<VayuSyncPersonalizedProps> = ({
             case 'travel':
               return <TravelIntelligenceCard key={roleId} weather={weather} intelligence={intelligence} context={context} />;
             case 'commute':
-              return <CommuteIntelligenceCard key={roleId} weather={weather} intelligence={intelligence} context={context} />;
+              return <CommuteIntelligenceCard key={roleId} weather={weather} intelligence={intelligence} context={context} hotspotReport={hotspotReport} />;
             case 'running':
               return <FitnessIntelligenceCard key={roleId} weather={weather} intelligence={intelligence} context={context} />;
             case 'family':
@@ -560,7 +563,7 @@ export const VayuSyncPersonalized: React.FC<VayuSyncPersonalizedProps> = ({
             case 'event_planning':
               return <EventPlannerIntelligenceCard key={roleId} weather={weather} intelligence={intelligence} context={context} />;
             default:
-              return <CommuteIntelligenceCard key={roleId} weather={weather} intelligence={intelligence} context={context} />;
+              return <CommuteIntelligenceCard key={roleId} weather={weather} intelligence={intelligence} context={context} hotspotReport={hotspotReport} />;
           }
         })}
           </div>

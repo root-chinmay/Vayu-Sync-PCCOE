@@ -399,6 +399,14 @@ export const Header: React.FC<HeaderProps> = ({
               {t.nav_daily}
             </button>
             <button
+              onClick={() => onSelectSection('hotspots')}
+              className={`px-3 py-1 rounded-lg transition shrink-0 whitespace-nowrap ${
+                activeSection === 'hotspots' ? 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold border border-sky-200/60 dark:border-sky-800/60' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-900'
+              }`}
+            >
+              {language === 'hi' ? 'हॉटस्पॉट फ़ाइंडर' : language === 'mr' ? 'हॉटस्पॉट फाइंडर' : 'Hotspot Finder'}
+            </button>
+            <button
               onClick={() => onSelectSection('radar')}
               className={`px-3 py-1 rounded-lg transition shrink-0 whitespace-nowrap ${
                 activeSection === 'radar' ? 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold border border-sky-200/60 dark:border-sky-800/60' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-900'

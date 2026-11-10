@@ -125,3 +125,18 @@ async def get_weather_anomaly(
     """
     from ..services.anomaly_service import get_historical_anomaly
     return await get_historical_anomaly(lat=lat, lon=lon, city_name=city or "Pune")
+
+@router.get("/hotspots")
+async def get_weather_hotspots(
+    lat: float = Query(18.5204, description="Latitude"),
+    lon: float = Query(73.8567, description="Longitude"),
+    city: Optional[str] = Query("Pune", description="City name"),
+    refresh: bool = Query(False, description="Bypass cache"),
+):
+    """
+    Geographical Hotspot Finder Endpoint.
+    Divides city into multi-point geographical cells, fetches multi-coordinate live weather + AQI,
+    computes historical anomaly scores and classifies risk levels.
+    """
+    from ..services.hotspot_service import get_geographical_hotspots
+    return await get_geographical_hotspots(lat=lat, lon=lon, city_name=city or "Pune", force=refresh)

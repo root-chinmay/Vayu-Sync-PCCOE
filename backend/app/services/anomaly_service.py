@@ -41,16 +41,18 @@ def calculate_z_score(val: float, mean: float, std: float) -> float:
 
 
 def classify_anomaly(
+    param_key: str,
     param_name: str,
     unit: str,
     current_val: float,
-    mean: float,
-    std: float,
+    stats: Dict[str, float],
     pct: int,
     z_score: float,
     sample_count: int,
     city_name: str,
 ) -> Dict[str, Any]:
+    mean = stats["mean"]
+    std = stats["std"]
     if z_score >= 2.0 or pct >= 98:
         category = "UNUSUAL"
         category_label = "Unusual High"
@@ -96,16 +98,21 @@ def classify_anomaly(
         )
 
     return {
-        "current": round(current_val, 1),
+        "parameter": param_key,
+        "parameter_name": param_name,
+        "unit": unit,
+        "current_value": round(current_val, 1),
+        "historical_mean": round(mean, 1),
         "historical_avg": round(mean, 1),
         "historical_std": round(std, 1),
-        "unit": unit,
+        "historical_min": round(stats["min"], 1),
+        "historical_max": round(stats["max"], 1),
+        "historical_percentile": pct,
+        "z_score": z_score,
         "category": category,
         "category_label": category_label,
-        "percentile": pct,
-        "z_score": z_score,
-        "sample_count": sample_count,
         "status_color": status_color,
+        "sample_count": sample_count,
         "explanation": explanation,
     }
 
@@ -215,32 +222,36 @@ async def get_historical_anomaly(lat: float, lon: float, city_name: str = "Pune"
 
     # Classifications
     rain_anomaly = classify_anomaly(
-        "Rainfall", "mm", today_rain, rain_stats["mean"], rain_stats["std"], rain_pct, rain_z, sample_count, city_name
+        "rainfall", "Daily Rainfall", "mm", today_rain, rain_stats, rain_pct, rain_z, sample_count, city_name
     )
     temp_anomaly = classify_anomaly(
-        "Temperature", "°C", today_temp, temp_stats["mean"], temp_stats["std"], temp_pct, temp_z, sample_count, city_name
+        "temperature", "Mean Temperature", "°C", today_temp, temp_stats, temp_pct, temp_z, sample_count, city_name
     )
     temp_max_anomaly = classify_anomaly(
-        "Max Temperature", "°C", today_temp_max, temp_max_stats["mean"], temp_max_stats["std"], temp_max_pct, temp_max_z, sample_count, city_name
+        "temp_max", "Max Temperature", "°C", today_temp_max, temp_max_stats, temp_max_pct, temp_max_z, sample_count, city_name
     )
     temp_min_anomaly = classify_anomaly(
-        "Min Temperature", "°C", today_temp_min, temp_min_stats["mean"], temp_min_stats["std"], temp_min_pct, temp_min_z, sample_count, city_name
+        "temp_min", "Min Temperature", "°C", today_temp_min, temp_min_stats, temp_min_pct, temp_min_z, sample_count, city_name
     )
 
     # Overall Classification
     categories = [rain_anomaly["category"], temp_anomaly["category"], temp_max_anomaly["category"], temp_min_anomaly["category"]]
     if "UNUSUAL" in categories:
-        overall_cat = "UNUSUAL"
-        overall_label = "Unusual Conditions Detected"
+        overall_status = "UNUSUAL"
+        overall_label = "Unusual"
+        overall_summary = f"Unusual weather anomaly detected in {city_name} relative to the 10-year seasonal baseline."
     elif "ABOVE_NORMAL" in categories:
-        overall_cat = "ABOVE_NORMAL"
-        overall_label = "Above Normal Conditions"
+        overall_status = "ABOVE_NORMAL"
+        overall_label = "Above Normal"
+        overall_summary = f"Conditions in {city_name} are tracking above historical seasonal averages."
     elif "BELOW_NORMAL" in categories:
-        overall_cat = "BELOW_NORMAL"
-        overall_label = "Below Normal Conditions"
+        overall_status = "BELOW_NORMAL"
+        overall_label = "Below Normal"
+        overall_summary = f"Conditions in {city_name} are tracking below historical seasonal averages."
     else:
-        overall_cat = "NORMAL"
-        overall_label = "Normal Weather Pattern"
+        overall_status = "NORMAL"
+        overall_label = "Normal"
+        overall_summary = f"Weather conditions in {city_name} are operating within the 10-year historical normal range."
 
     # Build 30-Day Trend Points
     fc_times = fc_daily.get("time", [])
@@ -250,10 +261,11 @@ async def get_historical_anomaly(lat: float, lon: float, city_name: str = "Pune"
     for idx, t_str in enumerate(fc_times):
         c_rain = float(fc_rain[idx]) if idx < len(fc_rain) and fc_rain[idx] is not None else 0.0
         c_temp = float(fc_temp_mean[idx]) if idx < len(fc_temp_mean) and fc_temp_mean[idx] is not None else temp_stats["mean"]
+        day_lbl = t_str.split("-", 1)[-1]
 
         rainfall_trend.append({
             "date": t_str,
-            "label": t_str.split("-", 1)[-1],
+            "day_label": day_lbl,
             "current_val": round(c_rain, 1),
             "historical_avg": round(rain_stats["mean"], 1),
             "historical_lower": 0.0,
@@ -262,7 +274,7 @@ async def get_historical_anomaly(lat: float, lon: float, city_name: str = "Pune"
 
         temperature_trend.append({
             "date": t_str,
-            "label": t_str.split("-", 1)[-1],
+            "day_label": day_lbl,
             "current_val": round(c_temp, 1),
             "historical_avg": round(temp_stats["mean"], 1),
             "historical_lower": round(max(0.0, temp_stats["mean"] - temp_stats["std"]), 1),
@@ -270,17 +282,16 @@ async def get_historical_anomaly(lat: float, lon: float, city_name: str = "Pune"
         })
 
     # Cautious Non-Alarmist Advisory Notice
-    is_active_advisory = overall_cat == "UNUSUAL" or (overall_cat == "ABOVE_NORMAL" and today_rain > 15.0)
+    is_active_advisory = overall_status == "UNUSUAL" or (overall_status == "ABOVE_NORMAL" and today_rain > 15.0)
     affected_param = "Rainfall" if rain_anomaly["category"] != "NORMAL" else "Temperature"
-    hist_comp = f"Observed {today_rain:.1f}mm vs normal {rain_stats['mean']:.1f}mm" if affected_param == "Rainfall" else f"Observed {today_temp:.1f}°C vs normal {temp_stats['mean']:.1f}°C"
-
     advisory_notice = {
         "is_active": is_active_advisory,
-        "affected_parameter": affected_param,
-        "historical_comparison": hist_comp,
-        "reason": f"Statistically unusual {affected_param.lower()} detected in {city_name} relative to the 10-year climatological comparison period ({target_day:02d}/{target_month:02d} ±7 days).",
-        "cautious_recommendation": f"Exercise normal caution in low-lying corridors and monitor local meteorological bulletins. Note: statistical anomalies indicate unusual historical variance and do not independently constitute a declared emergency.",
-    }
+        "parameter": affected_param,
+        "severity": "warning",
+        "title": f"Unusual {affected_param} Anomaly in {city_name}",
+        "message": f"Statistically unusual {affected_param.lower()} detected in {city_name} relative to the 10-year baseline ({target_day:02d}/{target_month:02d} ±7 days).",
+        "recommendation": "Exercise caution in low-lying corridors and verify local meteorological bulletins. Statistical anomalies do not independently constitute declared disasters.",
+    } if is_active_advisory else None
 
     report = {
         "location": {
@@ -288,24 +299,28 @@ async def get_historical_anomaly(lat: float, lon: float, city_name: str = "Pune"
             "lat": lat,
             "lon": lon,
         },
-        "date": now.strftime("%Y-%m-%d"),
-        "comparison_period": f"{current_year - 10}–{current_year - 1} (10-Year Climatological Baseline)",
-        "window_description": f"±7 days around {now.strftime('%d %B')} across 10 previous years",
-        "sample_count": sample_count,
-        "data_source": "Open-Meteo Historical Archive & Forecast API",
-        "overall_category": overall_cat,
-        "overall_category_label": overall_label,
+        "target_date": now.strftime("%Y-%m-%d"),
+        "comparison_window": {
+            "start_year": current_year - 10,
+            "end_year": current_year - 1,
+            "total_years": 10,
+            "calendar_window_days": 15,
+            "total_baseline_samples": sample_count,
+        },
+        "overall_status": overall_status,
+        "overall_status_label": overall_label,
+        "overall_summary": overall_summary,
+        "advisory_notice": advisory_notice,
         "rainfall": rain_anomaly,
         "temperature": temp_anomaly,
         "temp_max": temp_max_anomaly,
         "temp_min": temp_min_anomaly,
-        "aqi_anomaly": None,
         "rainfall_trend": rainfall_trend,
         "temperature_trend": temperature_trend,
-        "advisory_notice": advisory_notice,
-        "disclaimer": "Historical anomaly detection identifies statistical deviations from multi-year climate baselines (ERA5 reanalysis). Deviations represent climatological departure and do not independently constitute flood or severe disaster declarations.",
-        "cached": False,
-        "timestamp": now.isoformat(),
+        "data_source": "Open-Meteo Historical Archive & ERA5 Reanalysis",
+        "source_attribution": "Open-Meteo ERA5 Reanalysis Dataset (10-Year Climatological Baseline)",
+        "last_updated": now.isoformat(),
+        "is_cached": False,
     }
 
     _anomaly_cache[cache_key] = {"ts": now_ts, "data": report}

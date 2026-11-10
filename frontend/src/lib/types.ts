@@ -486,3 +486,95 @@ export interface HistoricalAnomalyReport {
   last_updated: string;
   is_cached?: boolean;
 }
+
+// ── GEOGRAPHICAL HOTSPOT FINDER TYPES ──────────────────────────────────────────
+
+export type HotspotRiskLevel = 'NORMAL' | 'LOW' | 'MODERATE' | 'HIGH' | 'CRITICAL';
+
+export type EnvironmentalLayer = 
+  | 'all' 
+  | 'rainfall' 
+  | 'temperature' 
+  | 'aqi' 
+  | 'flood_risk' 
+  | 'storm_risk';
+
+export interface HotspotGridCell {
+  id: string;
+  name: string;
+  sub_region?: string;
+  lat: number;
+  lon: number;
+  boundary?: Array<{ lat: number; lon: number }>;
+  observed: {
+    rainfall_mm: number;
+    temp_c: number;
+    aqi?: number;
+    pm2_5?: number;
+    pm10?: number;
+    wind_speed_kmh?: number;
+    weather_code?: number;
+    condition_text?: string;
+  };
+  historical_baseline: {
+    avg_rainfall_mm: number;
+    avg_temp_c: number;
+    baseline_samples: number;
+  };
+  statistical: {
+    rainfall_z: number;
+    rainfall_pct: number;
+    rainfall_category: string;
+    temp_z: number;
+    temp_pct: number;
+    temp_category: string;
+    aqi_category?: string;
+  };
+  scores: {
+    rainfall_score: number;
+    temp_score: number;
+    aqi_score: number;
+    combined_score: number;
+  };
+  risk_level: HotspotRiskLevel;
+  risk_label: string;
+  risk_color: string;
+  primary_driver: string;
+  explanation: string;
+  recommendations: string[];
+  commuter_impact?: {
+    affects_route: boolean;
+    advisory: string;
+    detour_note?: string;
+  };
+  nearest_shelter?: {
+    name: string;
+    type: string;
+    distance_km: number;
+    verified: boolean;
+  };
+}
+
+export interface HotspotReport {
+  location: {
+    name: string;
+    lat: number;
+    lon: number;
+  };
+  timestamp: string;
+  last_updated: string;
+  total_cells: number;
+  counts: {
+    normal: number;
+    low: number;
+    moderate: number;
+    high: number;
+    critical: number;
+  };
+  active_layer: EnvironmentalLayer;
+  cells: HotspotGridCell[];
+  highest_risk_cell?: HotspotGridCell | null;
+  data_sources: string[];
+  disclaimer: string;
+  is_cached?: boolean;
+}

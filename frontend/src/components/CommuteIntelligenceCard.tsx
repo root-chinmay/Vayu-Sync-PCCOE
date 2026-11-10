@@ -14,7 +14,7 @@ import {
   Train,
   CheckCircle2
 } from 'lucide-react';
-import { WeatherResponse, IntelligenceSummary, UserContext } from '../lib/types';
+import { WeatherResponse, IntelligenceSummary, UserContext, HotspotReport } from '../lib/types';
 import { useLanguage } from '../hooks/useLanguage';
 import { getLocalizedWeatherCondition } from '../lib/weatherConditions';
 
@@ -22,12 +22,14 @@ interface CommuteIntelligenceCardProps {
   weather: WeatherResponse;
   intelligence: IntelligenceSummary;
   context: UserContext;
+  hotspotReport?: HotspotReport | null;
 }
 
 export const CommuteIntelligenceCard: React.FC<CommuteIntelligenceCardProps> = ({
   weather,
   intelligence,
   context,
+  hotspotReport,
 }) => {
   const { t, language } = useLanguage();
   const curr = weather.current;
@@ -299,6 +301,50 @@ export const CommuteIntelligenceCard: React.FC<CommuteIntelligenceCardProps> = (
           <span className="text-[11px] text-slate-600 dark:text-slate-300">{commIntel?.commute_window_tip || 'Road conditions remain clear.'}</span>
         </div>
       </div>
+
+      {/* Geographical Hotspot Corridor Intelligence (Connected from Hotspot Finder) */}
+      {hotspotReport && hotspotReport.cells && hotspotReport.cells.length > 0 && (() => {
+        const impactedCells = hotspotReport.cells.filter((c) => c.commuter_impact?.affects_route);
+        return (
+          <div className="p-4 rounded-2xl bg-slate-50/90 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-800 dark:text-slate-200">
+                <MapPin className="w-4 h-4 text-sky-500" />
+                <span>Spatial Corridor Risk Scan ({hotspotReport.location.name})</span>
+              </div>
+              <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400">
+                {impactedCells.length === 0 ? 'All 12 corridors clear' : `${impactedCells.length} corridor(s) flagged`}
+              </span>
+            </div>
+
+            {impactedCells.length > 0 ? (
+              <div className="space-y-2">
+                {impactedCells.slice(0, 3).map((cell) => (
+                  <div key={cell.id} className="p-2.5 rounded-xl bg-white dark:bg-slate-800/80 border border-amber-200 dark:border-amber-800/60 text-xs space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-900 dark:text-white">{cell.name}</span>
+                      <span className="px-1.5 py-0.5 text-[10px] font-bold rounded bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300">
+                        {cell.risk_label} ({cell.scores.combined_score}/100)
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-300">{cell.commuter_impact?.advisory}</p>
+                    {cell.commuter_impact?.detour_note && (
+                      <p className="text-[11px] font-medium text-sky-700 dark:text-sky-400">Safer Option: {cell.commuter_impact.detour_note}</p>
+                    )}
+                  </div>
+                ))}
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 italic">
+                  Note: Corridor indicators reflect environmental weather anomalies; live municipal traffic signals should be verified before departure.
+                </p>
+              </div>
+            ) : (
+              <p className="text-[11px] text-slate-600 dark:text-slate-400">
+                All scanned geographical grid sectors around {hotspotReport.location.name} report normal transit conditions with zero spatial rainfall/AQI hotspot interference.
+              </p>
+            )}
+          </div>
+        );
+      })()}
 
     </div>
   );

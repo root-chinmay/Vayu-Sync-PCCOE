@@ -17,7 +17,8 @@ import {
   FeedbackSubmissionResponse,
   NationalLeaderboardResponse,
   IssueReportSubmission,
-  HistoricalAnomalyReport
+  HistoricalAnomalyReport,
+  HotspotReport
 } from './types';
 import { 
   saveCachedWeather, 
@@ -25,10 +26,13 @@ import {
   getCachedWeather, 
   getCachedIntelligence,
   saveCachedAnomaly,
-  getCachedAnomaly
+  getCachedAnomaly,
+  saveCachedHotspots,
+  getCachedHotspots
 } from './storage';
 import { fetchLiveWeather, INDIAN_CITIES } from './openMeteo';
 import { computeHistoricalAnomaly } from './anomalyEngine';
+import { computeGeographicalHotspots } from './hotspotEngine';
 
 /**
  * Dynamic API Base Resolution:
@@ -200,6 +204,70 @@ export async function fetchWeatherAnomaly(
     data_source: 'Open-Meteo Historical Archive & ERA5 Reanalysis',
     source_attribution: 'Open-Meteo ERA5 Reanalysis Dataset',
     last_updated: new Date().toISOString(),
+    is_cached: true,
+  };
+}
+
+/**
+ * Geographical Hotspot Finder Fetcher
+ * Evaluates 12 sub-city spatial cells using real multi-coordinate weather + AQI + historical baselines
+ */
+export async function fetchGeographicalHotspots(
+  lat: number,
+  lon: number,
+  cityName: string = 'Pune',
+  forceRefresh: boolean = false
+): Promise<HotspotReport> {
+  const params = new URLSearchParams({
+    lat: lat.toString(),
+    lon: lon.toString(),
+    city: cityName,
+  });
+  if (forceRefresh) {
+    params.append('refresh', 'true');
+    params.append('_t', Date.now().toString());
+  }
+
+  // 1. Try Next.js or Python FastAPI Endpoint
+  try {
+    const apiBase = getApiBase();
+    const res = await fetch(`${apiBase}/weather/hotspots?${params.toString()}`);
+    if (res.ok) {
+      const data: HotspotReport = await res.json();
+      await saveCachedHotspots(data);
+      return data;
+    }
+  } catch (apiErr) {
+    console.info('Hotspot API route unavailable, falling back to direct spatial engine...', apiErr);
+  }
+
+  // 2. Direct client-side spatial engine fallback
+  try {
+    const directReport = await computeGeographicalHotspots(lat, lon, cityName, forceRefresh);
+    await saveCachedHotspots(directReport);
+    return directReport;
+  } catch (engineErr) {
+    console.warn('Direct hotspot spatial calculation failed, checking offline cache...', engineErr);
+  }
+
+  // 3. Offline Cache Recovery
+  const cached = await getCachedHotspots(lat, lon);
+  if (cached) {
+    return { ...cached, is_cached: true };
+  }
+
+  // 4. Empty safe baseline state (never fabricates fake hotspots)
+  return {
+    location: { name: cityName, lat, lon },
+    timestamp: new Date().toISOString(),
+    last_updated: 'Offline / Syncing',
+    total_cells: 0,
+    counts: { normal: 0, low: 0, moderate: 0, high: 0, critical: 0 },
+    active_layer: 'all',
+    cells: [],
+    highest_risk_cell: null,
+    data_sources: ['Open-Meteo Weather & Air Quality API (Offline Sync Pending)'],
+    disclaimer: 'Offline mode active. Geographical hotspot cells will synchronize automatically when connectivity is restored.',
     is_cached: true,
   };
 }

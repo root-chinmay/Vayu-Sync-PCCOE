@@ -24,14 +24,16 @@ import {
   WeatherResponse, 
   IntelligenceSummary, 
   UserContext,
-  HistoricalAnomalyReport
+  HistoricalAnomalyReport,
+  HotspotReport
 } from '../lib/types';
 import { 
   fetchWeather, 
   fetchIntelligence, 
   fetchCities,
   reverseGeocodeLocation,
-  fetchWeatherAnomaly
+  fetchWeatherAnomaly,
+  fetchGeographicalHotspots
 } from '../lib/api';
 import { WaveGreetingBanner } from '../components/WaveGreetingBanner';
 import { BottomNavBar } from '../components/BottomNavBar';
@@ -79,6 +81,10 @@ function MainApp() {
   // Historical Weather Anomaly State (Today vs Normal)
   const [anomalyReport, setAnomalyReport] = useState<HistoricalAnomalyReport | null>(null);
   const [isAnomalyLoading, setIsAnomalyLoading] = useState<boolean>(false);
+
+  // Geographical Hotspot Finder State
+  const [hotspotReport, setHotspotReport] = useState<HotspotReport | null>(null);
+  const [isHotspotLoading, setIsHotspotLoading] = useState<boolean>(false);
 
   // ── ONBOARDING FLOW STATE ──────────────────────────────────────────────────
   // Step 1: 'location' -> Step 2: 'language' -> Step 3: 'personalize' -> 'completed'
@@ -173,10 +179,29 @@ function MainApp() {
     }
   }, []);
 
+  // Fetch Geographical Hotspot Grid (Hotspot Finder)
+  const loadHotspots = useCallback(async (
+    lat: number,
+    lon: number,
+    cityName: string,
+    forceRefresh: boolean = false
+  ) => {
+    setIsHotspotLoading(true);
+    try {
+      const report = await fetchGeographicalHotspots(lat, lon, cityName, forceRefresh);
+      setHotspotReport(report);
+    } catch (err) {
+      console.warn('Failed to scan geographical hotspots:', err);
+    } finally {
+      setIsHotspotLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     loadData(currentCity.lat, currentCity.lon, currentCity.name, activeScenario, context);
     loadAnomaly(currentCity.lat, currentCity.lon, currentCity.name);
-  }, [currentCity, activeScenario, loadData, loadAnomaly]);
+    loadHotspots(currentCity.lat, currentCity.lon, currentCity.name);
+  }, [currentCity, activeScenario, loadData, loadAnomaly, loadHotspots]);
 
   // Handle saving personalization preferences
   const handleSaveContext = async (updatedCtx: UserContext) => {
@@ -341,10 +366,11 @@ function MainApp() {
         activeSection={activeSection}
         onSelectSection={handleSelectSection}
         providerName={weather?.provider || 'VayuSync Data Standard'}
-        isLiveLoading={isLoading || isAnomalyLoading}
+        isLiveLoading={isLoading || isAnomalyLoading || isHotspotLoading}
         onRefresh={() => {
           loadData(currentCity.lat, currentCity.lon, currentCity.name, activeScenario, context, true);
           loadAnomaly(currentCity.lat, currentCity.lon, currentCity.name, true);
+          loadHotspots(currentCity.lat, currentCity.lon, currentCity.name, true);
         }}
       />
 
@@ -398,6 +424,10 @@ function MainApp() {
                 anomalyReport={anomalyReport}
                 isAnomalyLoading={isAnomalyLoading}
                 onRefreshAnomaly={() => loadAnomaly(currentCity.lat, currentCity.lon, currentCity.name, true)}
+                hotspotReport={hotspotReport}
+                isHotspotLoading={isHotspotLoading}
+                onRefreshHotspots={() => loadHotspots(currentCity.lat, currentCity.lon, currentCity.name, true)}
+                onSelectSection={handleSelectSection}
                 onSelectCity={handleSelectCity}
                 onOpenPersonalizeModal={() => setIsPersonalizeOpen(true)}
                 onEnablePersonalizedMode={() => {
@@ -415,6 +445,7 @@ function MainApp() {
                   weather={weather}
                   intelligence={intelligence}
                   context={context}
+                  hotspotReport={hotspotReport}
                   onOpenPersonalizeModal={() => setIsPersonalizeOpen(true)}
                   onOpenAssistant={() => setIsAssistantOpen(true)}
                   onSelectCity={handleSelectCity}

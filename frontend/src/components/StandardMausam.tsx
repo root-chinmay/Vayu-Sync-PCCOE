@@ -17,7 +17,7 @@ import {
   CloudRain,
   MapPin
 } from 'lucide-react';
-import { WeatherResponse, EventPlanningIntelligence, VisibilityIntelligence, IntelligenceSummary, UserContext, HistoricalAnomalyReport } from '../lib/types';
+import { WeatherResponse, EventPlanningIntelligence, VisibilityIntelligence, IntelligenceSummary, UserContext, HistoricalAnomalyReport, HotspotReport } from '../lib/types';
 import { WeatherMap } from './WeatherMap';
 import { DetailedUVGraph } from './DetailedUVGraph';
 import { DetailedColorCodedGraphs } from './DetailedColorCodedGraphs';
@@ -26,6 +26,7 @@ import { EventPlannerCard } from './EventPlannerCard';
 import { VayuSyncHeroCard } from './VayuSyncHeroCard';
 import { OutdoorActivitiesCompanion } from './OutdoorActivitiesCompanion';
 import { TodayVsNormalCard } from './TodayVsNormalCard';
+import { HotspotFinderCard } from './HotspotFinderCard';
 import { useLanguage } from '../hooks/useLanguage';
 import { getLocalizedWeatherCondition, getLocalizedWeekday } from '../lib/weatherConditions';
 
@@ -38,6 +39,10 @@ interface StandardMausamProps {
   anomalyReport?: HistoricalAnomalyReport | null;
   isAnomalyLoading?: boolean;
   onRefreshAnomaly?: () => void;
+  hotspotReport?: HotspotReport | null;
+  isHotspotLoading?: boolean;
+  onRefreshHotspots?: () => void;
+  onSelectSection?: (sectionId: string) => void;
   onSelectCity: (city: { name: string; state?: string; lat: number; lon: number; default_persona: string }) => void;
   onOpenPersonalizeModal: () => void;
   onEnablePersonalizedMode: () => void;
@@ -60,6 +65,10 @@ export const StandardMausam: React.FC<StandardMausamProps> = ({
   anomalyReport,
   isAnomalyLoading = false,
   onRefreshAnomaly,
+  hotspotReport,
+  isHotspotLoading = false,
+  onRefreshHotspots,
+  onSelectSection,
   onSelectCity,
   onOpenPersonalizeModal,
   onEnablePersonalizedMode,
@@ -182,6 +191,46 @@ export const StandardMausam: React.FC<StandardMausamProps> = ({
                 {anomalyReport.advisory_notice.recommendation}
               </p>
             </div>
+          </div>
+        )}
+
+        {/* Geographical Hotspot Alert (Non-duplicate spatial alert when >=1 High or Critical zones are detected) */}
+        {hotspotReport && (hotspotReport.counts.high > 0 || hotspotReport.counts.critical > 0) && hotspotReport.highest_risk_cell && (
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-rose-50 to-amber-50 dark:from-rose-950/40 dark:to-amber-950/30 border border-rose-300 dark:border-rose-800/70 flex items-start justify-between gap-3.5 text-slate-900 dark:text-slate-100 shadow-sm transition">
+            <div className="flex items-start gap-3.5">
+              <div className="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-900/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 mt-0.5 border border-rose-200 dark:border-rose-800">
+                <MapPin className="w-5 h-5 animate-pulse" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded bg-rose-600 text-white shadow-xs">
+                    GEOGRAPHICAL HOTSPOT DETECTED
+                  </span>
+                  <span className="text-[11px] font-bold text-rose-800 dark:text-rose-300">
+                    {hotspotReport.counts.high + hotspotReport.counts.critical} Zone(s) Elevated
+                  </span>
+                  <span className="text-[10px] font-mono text-slate-600 dark:text-slate-400">
+                    • Peak: {hotspotReport.highest_risk_cell.name} ({hotspotReport.highest_risk_cell.scores.combined_score}/100)
+                  </span>
+                </div>
+                <p className="text-xs text-rose-950 dark:text-rose-100 font-semibold leading-relaxed">
+                  {hotspotReport.highest_risk_cell.explanation}
+                </p>
+                {hotspotReport.highest_risk_cell.commuter_impact?.affects_route && (
+                  <p className="text-[11px] text-rose-800 dark:text-rose-300">
+                    Transit Impact: {hotspotReport.highest_risk_cell.commuter_impact.advisory}
+                  </p>
+                )}
+              </div>
+            </div>
+            {onSelectSection && (
+              <button
+                onClick={() => onSelectSection('hotspots')}
+                className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold shrink-0 transition"
+              >
+                Inspect Map
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -327,8 +376,19 @@ export const StandardMausam: React.FC<StandardMausamProps> = ({
 
       </div>
 
-      {/* 10. Interactive Weather Radar & Satellite Map (Full-Width at Bottom) */}
-      <div id="radar" className="w-full scroll-mt-28">
+      {/* 10. Interactive Weather Radar & Geographical Hotspot Finder (Full-Width at Bottom) */}
+      <div id="radar" className="w-full scroll-mt-28 space-y-8">
+        <div id="hotspots" className="w-full scroll-mt-28">
+          <HotspotFinderCard
+            hotspotReport={hotspotReport}
+            isLoading={isHotspotLoading}
+            onRefresh={onRefreshHotspots}
+            cityName={loc.name}
+            onNavigateToSection={onSelectSection}
+            onNavigateToPersonalized={onEnablePersonalizedMode}
+          />
+        </div>
+
         <WeatherMap
           currentLocation={loc}
           onSelectCoordinates={onSelectCity}

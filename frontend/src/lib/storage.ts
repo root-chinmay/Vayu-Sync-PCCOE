@@ -1,8 +1,8 @@
 import { openDB, IDBPDatabase } from 'idb';
-import { WeatherResponse, IntelligenceSummary, UserContext, HistoricalAnomalyReport } from './types';
+import { WeatherResponse, IntelligenceSummary, UserContext, HistoricalAnomalyReport, HotspotReport } from './types';
 
 const DB_NAME = 'vayusync_db';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 let dbPromise: Promise<IDBPDatabase> | null = null;
 
@@ -22,6 +22,9 @@ function getDB() {
         }
         if (!db.objectStoreNames.contains('anomaly')) {
           db.createObjectStore('anomaly');
+        }
+        if (!db.objectStoreNames.contains('hotspots')) {
+          db.createObjectStore('hotspots');
         }
       },
     });
@@ -134,6 +137,57 @@ export async function getCachedAnomaly(lat?: number, lon?: number): Promise<Hist
     return (await db.get('anomaly', 'latest_anomaly')) || null;
   } catch (err) {
     console.warn('IndexedDB getCachedAnomaly failed:', err);
+    return null;
+  }
+}
+
+export async function saveCachedHotspots(report: HotspotReport): Promise<void> {
+  try {
+    const key = `hotspots_${report.location.lat.toFixed(2)}_${report.location.lon.toFixed(2)}`;
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(`vayusync_hotspots_${key}`, JSON.stringify(report));
+        localStorage.setItem('vayusync_hotspots_latest', JSON.stringify(report));
+      } catch {
+        // ignore quota errors
+      }
+    }
+    const db = await getDB();
+    if (db && db.objectStoreNames.contains('hotspots')) {
+      await db.put('hotspots', report, key);
+      await db.put('hotspots', report, 'latest_hotspots');
+    }
+  } catch (err) {
+    console.warn('IndexedDB saveCachedHotspots failed:', err);
+  }
+}
+
+export async function getCachedHotspots(lat?: number, lon?: number): Promise<HotspotReport | null> {
+  try {
+    const key = lat !== undefined && lon !== undefined
+      ? `hotspots_${lat.toFixed(2)}_${lon.toFixed(2)}`
+      : 'hotspots_latest';
+
+    if (typeof window !== 'undefined') {
+      const lsHit = localStorage.getItem(`vayusync_hotspots_${key}`) || localStorage.getItem('vayusync_hotspots_latest');
+      if (lsHit) {
+        try {
+          return JSON.parse(lsHit);
+        } catch {
+          // ignore
+        }
+      }
+    }
+
+    const db = await getDB();
+    if (!db || !db.objectStoreNames.contains('hotspots')) return null;
+    if (lat !== undefined && lon !== undefined) {
+      const hit = await db.get('hotspots', key);
+      if (hit) return hit;
+    }
+    return (await db.get('hotspots', 'latest_hotspots')) || null;
+  } catch (err) {
+    console.warn('IndexedDB getCachedHotspots failed:', err);
     return null;
   }
 }
