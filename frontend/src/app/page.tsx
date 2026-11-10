@@ -23,13 +23,15 @@ import { ALL_INDIAN_LANGUAGES, Language } from '../lib/i18n';
 import { 
   WeatherResponse, 
   IntelligenceSummary, 
-  UserContext 
+  UserContext,
+  HistoricalAnomalyReport
 } from '../lib/types';
 import { 
   fetchWeather, 
   fetchIntelligence, 
   fetchCities,
-  reverseGeocodeLocation
+  reverseGeocodeLocation,
+  fetchWeatherAnomaly
 } from '../lib/api';
 import { WaveGreetingBanner } from '../components/WaveGreetingBanner';
 import { BottomNavBar } from '../components/BottomNavBar';
@@ -73,6 +75,10 @@ function MainApp() {
   const [isHelpReportOpen, setIsHelpReportOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
+
+  // Historical Weather Anomaly State (Today vs Normal)
+  const [anomalyReport, setAnomalyReport] = useState<HistoricalAnomalyReport | null>(null);
+  const [isAnomalyLoading, setIsAnomalyLoading] = useState<boolean>(false);
 
   // ── ONBOARDING FLOW STATE ──────────────────────────────────────────────────
   // Step 1: 'location' -> Step 2: 'language' -> Step 3: 'personalize' -> 'completed'
@@ -149,9 +155,28 @@ function MainApp() {
     }
   }, []);
 
+  // Fetch 10-year Historical Climate Anomaly Baseline (Today vs Normal)
+  const loadAnomaly = useCallback(async (
+    lat: number,
+    lon: number,
+    cityName: string,
+    forceRefresh: boolean = false
+  ) => {
+    setIsAnomalyLoading(true);
+    try {
+      const report = await fetchWeatherAnomaly(lat, lon, cityName, forceRefresh);
+      setAnomalyReport(report);
+    } catch (err) {
+      console.warn('Failed to compute historical weather anomaly:', err);
+    } finally {
+      setIsAnomalyLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     loadData(currentCity.lat, currentCity.lon, currentCity.name, activeScenario, context);
-  }, [currentCity, activeScenario, loadData]);
+    loadAnomaly(currentCity.lat, currentCity.lon, currentCity.name);
+  }, [currentCity, activeScenario, loadData, loadAnomaly]);
 
   // Handle saving personalization preferences
   const handleSaveContext = async (updatedCtx: UserContext) => {
@@ -316,8 +341,11 @@ function MainApp() {
         activeSection={activeSection}
         onSelectSection={handleSelectSection}
         providerName={weather?.provider || 'VayuSync Data Standard'}
-        isLiveLoading={isLoading}
-        onRefresh={() => loadData(currentCity.lat, currentCity.lon, currentCity.name, activeScenario, context, true)}
+        isLiveLoading={isLoading || isAnomalyLoading}
+        onRefresh={() => {
+          loadData(currentCity.lat, currentCity.lon, currentCity.name, activeScenario, context, true);
+          loadAnomaly(currentCity.lat, currentCity.lon, currentCity.name, true);
+        }}
       />
 
       {/* Main Container */}
@@ -367,6 +395,9 @@ function MainApp() {
                 context={context}
                 eventIntel={intelligence?.event_planning}
                 visibilityIntel={intelligence?.visibility_intel}
+                anomalyReport={anomalyReport}
+                isAnomalyLoading={isAnomalyLoading}
+                onRefreshAnomaly={() => loadAnomaly(currentCity.lat, currentCity.lon, currentCity.name, true)}
                 onSelectCity={handleSelectCity}
                 onOpenPersonalizeModal={() => setIsPersonalizeOpen(true)}
                 onEnablePersonalizedMode={() => {

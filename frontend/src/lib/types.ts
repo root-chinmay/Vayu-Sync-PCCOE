@@ -419,3 +419,70 @@ export interface IntelligenceSummary {
   allergy_outlook?: AllergyOutlook | null;
   visibility_intel?: VisibilityIntelligence | null;
 }
+
+// ── Historical Weather Anomaly Detection Types ──
+export type AnomalyCategory = 'NORMAL' | 'ABOVE_NORMAL' | 'BELOW_NORMAL' | 'UNUSUAL';
+
+export interface WeatherParameterAnomaly {
+  parameter: 'rainfall' | 'temperature' | 'temp_max' | 'temp_min';
+  parameter_name: string;
+  unit: string;
+  current_value: number;
+  historical_mean: number;
+  historical_std: number;
+  historical_min: number;
+  historical_max: number;
+  historical_percentile: number;
+  z_score: number;
+  category: AnomalyCategory;
+  category_label: string;
+  status_color: 'emerald' | 'amber' | 'rose' | 'sky';
+  sample_count: number;
+  explanation: string;
+}
+
+export interface HistoricalTrendPoint {
+  date: string;
+  day_label: string;
+  current_val: number;
+  historical_avg: number;
+  historical_lower: number;
+  historical_upper: number;
+}
+
+export interface HistoricalAnomalyReport {
+  location: {
+    name: string;
+    lat: number;
+    lon: number;
+  };
+  target_date: string;
+  comparison_window: {
+    start_year: number;
+    end_year: number;
+    total_years: number;
+    calendar_window_days: number;
+    total_baseline_samples: number;
+  };
+  overall_status: AnomalyCategory;
+  overall_status_label: string;
+  overall_summary: string;
+  advisory_notice?: {
+    is_active: boolean;
+    parameter: string;
+    severity: 'info' | 'warning' | 'alert';
+    title: string;
+    message: string;
+    recommendation: string;
+  } | null;
+  rainfall: WeatherParameterAnomaly;
+  temperature: WeatherParameterAnomaly;
+  temp_max?: WeatherParameterAnomaly;
+  temp_min?: WeatherParameterAnomaly;
+  rainfall_trend: HistoricalTrendPoint[];
+  temperature_trend: HistoricalTrendPoint[];
+  data_source: string;
+  source_attribution: string;
+  last_updated: string;
+  is_cached?: boolean;
+}

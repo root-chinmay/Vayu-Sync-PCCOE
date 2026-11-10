@@ -375,6 +375,14 @@ export const Header: React.FC<HeaderProps> = ({
               {t.nav_overview}
             </button>
             <button
+              onClick={() => onSelectSection('today-vs-normal')}
+              className={`px-3 py-1 rounded-lg transition shrink-0 whitespace-nowrap ${
+                activeSection === 'today-vs-normal' ? 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold border border-sky-200/60 dark:border-sky-800/60' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-900'
+              }`}
+            >
+              {language === 'hi' ? 'आज बनाम सामान्य' : language === 'mr' ? 'आज वि. सामान्य' : language === 'bn' ? 'আজ বনাম স্বাভাবিক' : 'Today vs Normal'}
+            </button>
+            <button
               onClick={() => onSelectSection('hourly')}
               className={`px-3 py-1 rounded-lg transition shrink-0 whitespace-nowrap ${
                 activeSection === 'hourly' ? 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold border border-sky-200/60 dark:border-sky-800/60' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-900'

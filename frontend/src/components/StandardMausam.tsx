@@ -17,7 +17,7 @@ import {
   CloudRain,
   MapPin
 } from 'lucide-react';
-import { WeatherResponse, EventPlanningIntelligence, VisibilityIntelligence, IntelligenceSummary, UserContext } from '../lib/types';
+import { WeatherResponse, EventPlanningIntelligence, VisibilityIntelligence, IntelligenceSummary, UserContext, HistoricalAnomalyReport } from '../lib/types';
 import { WeatherMap } from './WeatherMap';
 import { DetailedUVGraph } from './DetailedUVGraph';
 import { DetailedColorCodedGraphs } from './DetailedColorCodedGraphs';
@@ -25,6 +25,7 @@ import { VisibilityCard } from './VisibilityCard';
 import { EventPlannerCard } from './EventPlannerCard';
 import { VayuSyncHeroCard } from './VayuSyncHeroCard';
 import { OutdoorActivitiesCompanion } from './OutdoorActivitiesCompanion';
+import { TodayVsNormalCard } from './TodayVsNormalCard';
 import { useLanguage } from '../hooks/useLanguage';
 import { getLocalizedWeatherCondition, getLocalizedWeekday } from '../lib/weatherConditions';
 
@@ -34,6 +35,9 @@ interface StandardMausamProps {
   context?: UserContext;
   eventIntel?: EventPlanningIntelligence | null;
   visibilityIntel?: VisibilityIntelligence | null;
+  anomalyReport?: HistoricalAnomalyReport | null;
+  isAnomalyLoading?: boolean;
+  onRefreshAnomaly?: () => void;
   onSelectCity: (city: { name: string; state?: string; lat: number; lon: number; default_persona: string }) => void;
   onOpenPersonalizeModal: () => void;
   onEnablePersonalizedMode: () => void;
@@ -53,6 +57,9 @@ export const StandardMausam: React.FC<StandardMausamProps> = ({
   },
   eventIntel,
   visibilityIntel,
+  anomalyReport,
+  isAnomalyLoading = false,
+  onRefreshAnomaly,
   onSelectCity,
   onOpenPersonalizeModal,
   onEnablePersonalizedMode,
@@ -123,8 +130,8 @@ export const StandardMausam: React.FC<StandardMausamProps> = ({
         </div>
       </div>
 
-      {/* 2. Official Weather Warnings */}
-      <div id="warnings" className="w-full scroll-mt-28">
+      {/* 2. Official Weather Warnings & Climate Anomaly Advisory */}
+      <div id="warnings" className="w-full scroll-mt-28 space-y-3">
         {alerts.length > 0 ? (
           <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 flex items-start gap-3 text-slate-900 dark:text-slate-100 shadow-sm">
             <AlertTriangle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5 animate-pulse" />
@@ -149,6 +156,44 @@ export const StandardMausam: React.FC<StandardMausamProps> = ({
             <span className="text-[11px] font-mono text-slate-400 dark:text-slate-500">{t.bulletin_normal}</span>
           </div>
         )}
+
+        {/* Dynamic Climate Anomaly Notification (Integrated into Warnings & Alerts) */}
+        {anomalyReport?.advisory_notice?.is_active && (
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/30 border border-amber-300 dark:border-amber-800/70 flex items-start gap-3.5 text-slate-900 dark:text-slate-100 shadow-sm transition">
+            <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-900/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5 border border-amber-200 dark:border-amber-800">
+              <AlertTriangle className="w-5 h-5 animate-pulse" />
+            </div>
+            <div className="flex-1 space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded bg-amber-600 text-white shadow-xs">
+                  CLIMATE ANOMALY ADVISORY
+                </span>
+                <span className="text-[11px] font-bold text-amber-800 dark:text-amber-300">
+                  {anomalyReport.advisory_notice.parameter.toUpperCase()}
+                </span>
+                <span className="text-[10px] font-mono text-slate-600 dark:text-slate-400">
+                  • {anomalyReport.advisory_notice.title}
+                </span>
+              </div>
+              <p className="text-xs text-amber-950 dark:text-amber-100 font-semibold leading-relaxed">
+                {anomalyReport.advisory_notice.message}
+              </p>
+              <p className="text-[11px] text-amber-800 dark:text-amber-300 leading-relaxed">
+                {anomalyReport.advisory_notice.recommendation}
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 3. Today vs Normal – Historical Weather Anomaly Detection Dashboard Card */}
+      <div id="today-vs-normal" className="w-full scroll-mt-28">
+        <TodayVsNormalCard
+          anomalyReport={anomalyReport}
+          isLoading={isAnomalyLoading}
+          onRefresh={onRefreshAnomaly}
+          cityName={loc.name}
+        />
       </div>
 
       {/* 2-Column Split: Left for Primary Overview & Forecasts, Right for Detailed Analytics Decks */}

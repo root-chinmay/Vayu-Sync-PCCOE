@@ -112,3 +112,16 @@ async def get_radar_layers(
     """Returns available radar layer tiles and Doppler station coverage."""
     weather_provider = get_weather_provider(provider)
     return await weather_provider.get_radar_layers(lat=lat, lon=lon)
+
+@router.get("/anomaly")
+async def get_weather_anomaly(
+    lat: float = Query(18.5204, description="Latitude"),
+    lon: float = Query(73.8567, description="Longitude"),
+    city: Optional[str] = Query("Pune", description="City name"),
+):
+    """
+    Today vs Normal – Historical Weather Anomaly Detection Endpoint.
+    Compares observed weather against 10-year climatological baseline (+-7 day window).
+    """
+    from ..services.anomaly_service import get_historical_anomaly
+    return await get_historical_anomaly(lat=lat, lon=lon, city_name=city or "Pune")
